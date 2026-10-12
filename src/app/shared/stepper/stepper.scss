@@ -1,0 +1,38 @@
+.stepper {
+  display: flex;
+  list-style: none;
+  padding: 4px 8px 0;
+  margin: 0;
+}
+li {
+  position: relative;
+  flex: 1;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+// connector to the next step
+li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: calc(50% + 10px);
+  width: calc(100% - 20px);
+  height: 2px;
+  background: var(--line);
+}
+li.done:not(:last-child)::after { background: var(--brand); }
+.dot {
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--surface);
+}
+li.done .dot { background: var(--brand); border-color: var(--brand); }
+li.active .dot { border-color: var(--brand); box-shadow: 0 0 0 4px var(--brand-soft); }
+li.done, li.active { color: var(--text); font-weight: 600; }

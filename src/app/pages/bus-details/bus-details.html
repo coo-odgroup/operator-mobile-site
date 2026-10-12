@@ -1,0 +1,90 @@
+<div class="page page--bar details">
+  <section class="hero">
+    <button class="round left" (click)="back()" aria-label="Go back"><app-icon name="chevron-left" /></button>
+    <button class="round right" (click)="share()" aria-label="Share"><app-icon name="share" [size]="18" /></button>
+    <app-icon name="bus" [size]="92" [stroke]="1.4" />
+    <span class="road"></span>
+  </section>
+
+  <section class="title row">
+    <div class="grow">
+      <h2>{{ b().operator }}</h2>
+      <p class="small muted">{{ b().type }}</p>
+    </div>
+    <span class="rating"><app-icon name="star" [size]="13" [fill]="true" />{{ b().rating }}</span>
+  </section>
+
+  <section class="card route">
+    <div class="tl">
+      <div><i></i><div class="strong">{{ from() }} Central Station</div><div class="tiny muted">{{ dateShort() }}, {{ b().depart }}</div></div>
+      <span class="duration"><span class="tiny muted">Duration</span><br /><b>{{ b().duration }}</b></span>
+      <div><i class="end"></i><div class="strong">{{ to() }} South Station</div><div class="tiny muted">{{ dateShort() }}, {{ b().arrive }}</div></div>
+    </div>
+  </section>
+
+  <h2 class="section-title">Amenities</h2>
+  <section class="card amenities">
+    @for (a of s.allAmenities; track a.key) {
+      <div class="amenity" [class.off]="!has(a.key)">
+        <app-icon [name]="a.icon" />
+        <span>{{ a.key }}</span>
+      </div>
+    }
+  </section>
+
+  <h2 class="section-title">Bus Photos</h2>
+  <div class="photos">
+    @for (p of photos; track p) {
+      <span class="photo" [style.background]="p"><app-icon name="image" [size]="26" /></span>
+    }
+  </div>
+
+  <h2 class="section-title">Pickup Points</h2>
+  <section class="card list" role="radiogroup" aria-label="Pickup point">
+    @for (p of s.pickupPoints(); track p.name; let i = $index) {
+      <button class="list-row" role="radio" [attr.aria-checked]="s.pickupIdx() === i" (click)="s.pickupIdx.set(i)">
+        <span class="radio" [class.on]="s.pickupIdx() === i"></span>
+        <span class="grow"><div class="list-row__t t">{{ p.name }}</div><div class="s">{{ p.detail }}</div></span>
+        <span class="small muted">{{ p.time }}</span>
+      </button>
+    }
+  </section>
+
+  <h2 class="section-title">Drop-off Points</h2>
+  <section class="card list" role="radiogroup" aria-label="Drop-off point">
+    @for (p of s.dropPoints(); track p.name; let i = $index) {
+      <button class="list-row" role="radio" [attr.aria-checked]="s.dropIdx() === i" (click)="s.dropIdx.set(i)">
+        <span class="radio" [class.on]="s.dropIdx() === i"></span>
+        <span class="grow"><div class="t">{{ p.name }}</div><div class="s">{{ p.detail }}</div></span>
+        <span class="small muted">{{ p.time }}</span>
+      </button>
+    }
+  </section>
+
+  <h2 class="section-title">Cancellation Policy</h2>
+  <section class="card policy">
+    @for (c of s.cancellation; track c.text) {
+      <p [class]="'dot-' + c.tone"><i></i>{{ c.text }}</p>
+    }
+  </section>
+
+  <h2 class="section-title">Reviews</h2>
+  @for (r of s.reviews; track r.name) {
+    <article class="card stack review">
+      <div class="row">
+        <span class="av">{{ initial(r.name) }}</span>
+        <div class="grow"><div class="strong">{{ r.name }}</div><div class="tiny muted">{{ r.date }}</div></div>
+        <span class="small strong score"><app-icon name="star" [size]="13" [fill]="true" />{{ r.rating.toFixed(1) }}</span>
+      </div>
+      <p class="small muted">{{ r.text }}</p>
+    </article>
+  }
+</div>
+
+<div class="action-bar fixed-frame">
+  <div>
+    <div class="amount">{{ b().price | currency: 'USD' : 'symbol' : '1.2-2' }}</div>
+    <div class="tiny muted">per person</div>
+  </div>
+  <button class="btn btn-primary" (click)="next()">Select Seats</button>
+</div>

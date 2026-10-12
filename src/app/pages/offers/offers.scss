@@ -1,0 +1,6 @@
+.points { display: grid; justify-items: center; gap: 4px; }
+.big { display: flex; align-items: center; gap: 6px; font-size: 26px; font-weight: 700; color: var(--brand); }
+.big app-icon { color: #f5a623; }
+.levels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); width: 100%; }
+.refer { display: flex; gap: 12px; align-items: center; }
+.promo { display: flex; gap: 8px; }

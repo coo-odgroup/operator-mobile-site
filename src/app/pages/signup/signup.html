@@ -1,0 +1,50 @@
+<div class="frame">
+  <main class="auth">
+    <button class="back" (click)="back()" aria-label="Go back"><app-icon name="chevron-left" [size]="22" /></button>
+
+    <header class="brand">
+      <span class="logo"><app-icon name="bus" [size]="36" /></span>
+      <h1>Create Account</h1>
+      <p class="small muted">Sign up to get started</p>
+    </header>
+
+    <form class="stack" (submit)="$event.preventDefault(); submit()" novalidate>
+      <label class="field">Full Name
+        <span class="input"><app-icon name="user" [size]="18" />
+          <input autocomplete="name" placeholder="Enter your full name" [value]="name()" (input)="name.set($any($event.target).value)" /></span></label>
+
+      <label class="field">Email
+        <span class="input"><app-icon name="mail" [size]="18" />
+          <input type="email" autocomplete="email" placeholder="Enter your email" [value]="email()" (input)="email.set($any($event.target).value)" /></span></label>
+
+      <label class="field">Phone Number
+        <span class="input"><app-icon name="phone" [size]="18" />
+          <input type="tel" autocomplete="tel" placeholder="Enter your phone number" [value]="phone()" (input)="phone.set($any($event.target).value)" /></span></label>
+
+      <div class="field">
+        <label class="stack" style="gap:6px">Password
+          <span class="input"><app-icon name="lock" [size]="18" />
+            <input [type]="show() ? 'text' : 'password'" autocomplete="new-password" placeholder="Create a password" [value]="password()" (input)="password.set($any($event.target).value)" />
+            <button type="button" class="eye" (click)="show.set(!show())" [attr.aria-label]="show() ? 'Hide password' : 'Show password'"><app-icon [name]="show() ? 'eye-off' : 'eye'" [size]="18" /></button></span>
+        </label>
+        @if (strength()) {
+          <div class="meter" [attr.data-level]="strength()" aria-live="polite">
+            <span class="bars"><i></i><i></i><i></i></span>
+            <span class="tiny">Password strength: {{ strengthLabel() }}</span>
+          </div>
+        }
+      </div>
+
+      <label class="row small agree">
+        <input type="checkbox" [checked]="agree()" (change)="agree.set($any($event.target).checked)" />
+        <span>I agree to the <a class="link" href="#" (click)="$event.preventDefault()">Terms of Service</a> and <a class="link" href="#" (click)="$event.preventDefault()">Privacy Policy</a></span>
+      </label>
+
+      @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+
+      <button class="btn btn-primary btn-block" type="submit">Create Account</button>
+    </form>
+
+    <p class="small center muted foot">Already have an account? <a routerLink="/login" class="link">Sign in</a></p>
+  </main>
+</div>

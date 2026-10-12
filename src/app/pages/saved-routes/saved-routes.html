@@ -1,0 +1,19 @@
+<div class="page">
+  @for (r of s.saved(); track r.from + r.to) {
+    <article class="card row">
+      <span class="tile"><app-icon name="heart" [fill]="true" /></span>
+      <span class="grow">
+        <div class="strong">{{ short(r.from) }} → {{ short(r.to) }}</div>
+        <div class="small muted">From ${{ r.price }} · {{ r.duration }}</div>
+      </span>
+      <button class="btn btn-primary btn-sm" (click)="go(r)">Search</button>
+      <button class="icon-btn" (click)="s.toggleSaved(r.from, r.to)" aria-label="Remove saved route"><app-icon name="x" [size]="16" /></button>
+    </article>
+  } @empty {
+    <div class="card empty">
+      <app-icon name="heart" [size]="34" />
+      <p>Tap the heart on any bus listing to save a route.</p>
+      <a class="btn btn-primary btn-sm" routerLink="/search">Find a bus</a>
+    </div>
+  }
+</div>

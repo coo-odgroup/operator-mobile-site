@@ -1,0 +1,26 @@
+<div class="page">
+  @for (b of confirmed(); track b.id) {
+    <article class="card ticket">
+      <div class="top">
+        <div>
+          <div class="strong" style="font-size:16px">{{ short(b.from) }} → {{ short(b.to) }}</div>
+          <div class="small" style="opacity:.85">{{ fmt(b.date) }} · {{ b.time }}</div>
+        </div>
+        <span class="chip chip-ok">Confirmed</span>
+      </div>
+      <div class="body">
+        <svg class="qr" viewBox="0 0 21 21" shape-rendering="crispEdges" role="img" [attr.aria-label]="'QR code for booking ' + b.id">
+          @for (c of qr(b.id); track $index) { <rect [attr.x]="c.x" [attr.y]="c.y" width="1" height="1" fill="#1e1a2d" /> }
+        </svg>
+        <div class="strong">#{{ b.id }}</div>
+        <div class="small muted">{{ b.seat }}</div>
+      </div>
+    </article>
+  } @empty {
+    <div class="card empty">
+      <app-icon name="qr" [size]="34" />
+      <p>No confirmed tickets yet.</p>
+      <a class="btn btn-primary btn-sm" routerLink="/search">Book a trip</a>
+    </div>
+  }
+</div>

@@ -1,0 +1,67 @@
+<form class="card stack" (submit)="go($event)" novalidate>
+  <h2 class="card-title" style="margin:0">
+    <app-icon name="search" />{{ mode() === 'simple' ? 'Find Your Bus' : 'Find Your Trip' }}
+  </h2>
+
+  <label class="field">
+    <span class="lbl"><app-icon name="pin" [size]="14" />From</span>
+    <select class="control" (change)="set('from', $any($event.target).value)">
+      <option value="" [selected]="!s.search().from">Select departure city</option>
+      @for (c of s.cities; track c) {
+        <option [value]="c" [selected]="c === s.search().from">{{ c }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="field">
+    <span class="lbl"><app-icon name="pin" [size]="14" />To</span>
+    <select class="control" (change)="set('to', $any($event.target).value)">
+      <option value="" [selected]="!s.search().to">Select destination city</option>
+      @for (c of s.cities; track c) {
+        <option [value]="c" [selected]="c === s.search().to">{{ c }}</option>
+      }
+    </select>
+  </label>
+
+  <button type="button" class="btn btn-soft btn-sm" style="justify-self:end" (click)="s.swapCities()">
+    <app-icon name="swap" [size]="15" />Swap cities
+  </button>
+
+  @if (mode() === 'simple') {
+    <label class="field">
+      <span class="lbl"><app-icon name="calendar" [size]="14" />Date of Journey</span>
+      <input class="control" type="date" [min]="today" [value]="s.search().date" (change)="set('date', $any($event.target).value)" />
+    </label>
+  } @else {
+    <div class="grid-2">
+      <label class="field">
+        <span class="lbl"><app-icon name="calendar" [size]="14" />Date</span>
+        <input class="control" type="date" [min]="today" [value]="s.search().date" (change)="set('date', $any($event.target).value)" />
+      </label>
+      <label class="field">
+        <span class="lbl"><app-icon name="users" [size]="14" />Passengers</span>
+        <select class="control" (change)="set('passengers', +$any($event.target).value)">
+          @for (n of [1, 2, 3, 4, 5, 6]; track n) {
+            <option [value]="n" [selected]="n === s.search().passengers">{{ n }} {{ n === 1 ? 'Passenger' : 'Passengers' }}</option>
+          }
+        </select>
+      </label>
+    </div>
+    <label class="row small">
+      <input type="checkbox" [checked]="s.search().roundTrip" (change)="set('roundTrip', $any($event.target).checked)" />
+      Round Trip
+    </label>
+    @if (s.search().roundTrip) {
+      <label class="field">
+        <span class="lbl"><app-icon name="calendar" [size]="14" />Return date</span>
+        <input class="control" type="date" [min]="s.search().date" [value]="s.search().returnDate" (change)="set('returnDate', $any($event.target).value)" />
+      </label>
+    }
+  }
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
+  <button class="btn btn-primary btn-block" type="submit"><app-icon name="search" [size]="18" />Search Buses</button>
+</form>

@@ -1,0 +1,36 @@
+<div class="page">
+  <app-search-form mode="simple" />
+
+  <h2 class="section-title">Popular Routes</h2>
+  <div class="grid-2">
+    @for (r of s.popularRoutes; track r.from + r.to) {
+      <button class="card route" (click)="pickRoute(r)">
+        <div class="stops">
+          <span class="stop"><i></i>{{ short(r.from) }}</span>
+          <span class="stop"><i class="end"></i>{{ short(r.to) }}</span>
+        </div>
+        <div class="row between small">
+          <span class="price">${{ r.price }}</span><span class="muted">{{ r.duration }}</span>
+        </div>
+      </button>
+    }
+  </div>
+
+  <h2 class="section-title">Recent Searches</h2>
+  @for (r of s.recent(); track r.from + r.to + r.date) {
+    <button class="card recent" (click)="again(r)">
+      <span class="grow">
+        <span class="r">{{ short(r.from) }} → {{ short(r.to) }}</span><br />
+        <span class="tiny muted">{{ fmt(r.date) }}</span>
+      </span>
+      <span class="icon-btn"><app-icon name="search" [size]="16" /></span>
+    </button>
+  } @empty {
+    <p class="small muted">Your recent searches will show up here.</p>
+  }
+
+  <h2 class="section-title">Special Offers</h2>
+  @for (o of s.offers; track o.code) {
+    <app-offer-card [offer]="o" />
+  }
+</div>

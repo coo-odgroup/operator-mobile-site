@@ -1,0 +1,30 @@
+<div class="page">
+  <app-search-form mode="full" />
+
+  <h2 class="section-title">Recent Searches</h2>
+  @for (r of s.recent(); track r.from + r.to + r.date) {
+    <div class="card stack">
+      <div class="row between">
+        <span class="strong">{{ short(r.from) }} → {{ short(r.to) }}</span>
+        <button class="x" (click)="s.removeRecent(r)" aria-label="Remove recent search"><app-icon name="x" [size]="16" /></button>
+      </div>
+      <div class="row small muted">
+        <app-icon name="calendar" [size]="14" />{{ fmt(r.date) }} · {{ r.passengers }}
+        {{ r.passengers === 1 ? 'Passenger' : 'Passengers' }}
+      </div>
+      <button class="btn btn-primary btn-block" (click)="again(r)">Search Again</button>
+    </div>
+  } @empty {
+    <p class="small muted">No recent searches yet.</p>
+  }
+
+  <h2 class="section-title">Popular Destinations</h2>
+  <div class="grid-2">
+    @for (d of s.destinations; track d.city) {
+      <button class="card dest" (click)="goTo(d.city)">
+        <span class="img" [style.background]="d.tint">{{ d.city }}</span>
+        <span class="foot"><span>From <b>${{ d.from }}</b></span><app-icon name="search" [size]="15" /></span>
+      </button>
+    }
+  </div>
+</div>

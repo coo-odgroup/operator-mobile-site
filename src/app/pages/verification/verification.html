@@ -1,0 +1,37 @@
+<div class="page">
+  @if (!s.seats().length) {
+    <div class="card empty">
+      <app-icon name="grid" [size]="34" />
+      <p>Select your seats before verifying passenger details.</p>
+      <a class="btn btn-primary btn-sm" routerLink="/seats">Select Seat</a>
+    </div>
+  } @else {
+    <app-stepper [current]="1" />
+
+    <form class="card stack" (submit)="$event.preventDefault(); sendOtp()" novalidate>
+      <h2 class="card-title" style="margin:0"><app-icon name="user" />Contact details</h2>
+      <label class="field">Full name
+        <input class="control" [value]="name()" (input)="name.set($any($event.target).value)" autocomplete="name" [disabled]="otpSent()" /></label>
+      <label class="field">Mobile number
+        <input class="control" type="tel" [value]="phone()" (input)="phone.set($any($event.target).value)" autocomplete="tel" [disabled]="otpSent()" /></label>
+      <label class="field">Email (for the e-ticket)
+        <input class="control" type="email" [value]="email()" (input)="email.set($any($event.target).value)" autocomplete="email" [disabled]="otpSent()" /></label>
+      @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+      @if (!otpSent()) {
+        <button class="btn btn-primary btn-block" type="submit"><app-icon name="shield-check" [size]="18" />Send verification code</button>
+      }
+    </form>
+
+    @if (otpSent()) {
+      <section class="card stack">
+        <h2 class="card-title" style="margin:0"><app-icon name="lock" />Enter the 4-digit code</h2>
+        <p class="small muted">We sent a code to {{ phone() }}. Demo mode: any 4 digits will verify.</p>
+        <input class="control otp" inputmode="numeric" maxlength="4" autocomplete="one-time-code" placeholder="••••"
+          [value]="otp()" (input)="otp.set($any($event.target).value.replace(/\D/g, ''))" aria-label="Verification code" />
+        @if (otpError()) { <p class="error" role="alert">{{ otpError() }}</p> }
+        <button class="btn btn-primary btn-block" (click)="verify()">Verify &amp; Continue</button>
+        <button class="btn btn-soft btn-block" (click)="otpSent.set(false)">Edit details</button>
+      </section>
+    }
+  }
+</div>

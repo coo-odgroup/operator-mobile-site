@@ -1,0 +1,84 @@
+<div class="page page--bar">
+  @if (!s.seats().length) {
+    <div class="card empty">
+      <app-icon name="grid" [size]="34" />
+      <p>Your cart is empty. Choose a bus and seats first.</p>
+      <a class="btn btn-primary btn-sm" routerLink="/search">Find a bus</a>
+    </div>
+  } @else {
+    <app-stepper [current]="2" />
+
+    <section class="card">
+      <h2 class="card-title">Order Summary</h2>
+      <div class="kv"><span>Trip</span><span>{{ s.search().from || 'New York' }} - {{ s.search().to || 'Boston' }}</span></div>
+      <div class="kv"><span>Date</span><span>{{ fmt(s.search().date) }}</span></div>
+      <div class="kv"><span>Passengers</span><span>{{ pax() }}</span></div>
+      <div class="kv"><span>Seats</span><span>{{ s.seats().join(', ') }}</span></div>
+      <div class="kv"><span>{{ s.seats().length }} × {{ s.bus().price | currency: 'USD' }}</span><span>{{ s.subtotal() | currency: 'USD' }}</span></div>
+      <div class="kv"><span>Service fee</span><span>{{ s.fee() | currency: 'USD' }}</span></div>
+      @if (s.discount() > 0) {
+        <div class="kv"><span>Discount ({{ s.promo()?.label }})</span><span class="ok">− {{ s.discount() | currency: 'USD' }}</span></div>
+      }
+      <div class="kv total"><span>Total Amount</span><span>{{ s.total() | currency: 'USD' }}</span></div>
+    </section>
+
+    <section class="card stack">
+      <h2 class="card-title" style="margin:0"><app-icon name="tag" />Promo code</h2>
+      <div class="promo">
+        <input class="control" placeholder="WEEKEND20" [value]="code()" (input)="code.set($any($event.target).value)" (keydown.enter)="apply()" />
+        <button class="btn btn-soft" (click)="apply()">Apply</button>
+      </div>
+      @if (s.promo(); as p) {
+        <p class="small row ok">
+          <app-icon name="check-circle" [size]="16" />{{ p.label }} applied
+          <button class="small remove" (click)="s.clearPromo()">Remove</button>
+        </p>
+      }
+    </section>
+
+    <h2 class="section-title">Select Payment Method</h2>
+    <section class="stack" role="radiogroup" aria-label="Payment method">
+      @for (c of s.cards(); track c.id) {
+        <button class="method" [class.on]="s.cardId() === c.id" role="radio" [attr.aria-checked]="s.cardId() === c.id" (click)="s.cardId.set(c.id)">
+          <span class="tile"><app-icon name="card" /></span>
+          <span class="grow">
+            <span class="strong">•••• •••• •••• {{ c.last4 }}</span><br />
+            <span class="tiny muted">Expires {{ c.expiry }}</span>
+          </span>
+          <span class="radio" [class.on]="s.cardId() === c.id"></span>
+        </button>
+      }
+
+      <button class="method add" (click)="adding.set(!adding())" [attr.aria-expanded]="adding()">
+        <span class="tile teal"><app-icon name="plus" /></span>
+        <span class="grow strong">Add New Card</span>
+        <app-icon [name]="adding() ? 'chevron-up' : 'chevron-down'" [size]="18" />
+      </button>
+
+      @if (adding()) {
+        <form class="card stack" (submit)="$event.preventDefault(); addCard()" novalidate>
+          <label class="field">Card number
+            <input class="control" inputmode="numeric" autocomplete="cc-number" placeholder="•••• •••• •••• ••••" [value]="number()" (input)="onNumber($any($event.target).value)" /></label>
+          <div class="grid-2">
+            <label class="field">Expiry
+              <input class="control" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5" [value]="expiry()" (input)="expiry.set($any($event.target).value)" /></label>
+            <label class="field">CVV
+              <input class="control" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="•••" maxlength="4" [value]="cvv()" (input)="cvv.set($any($event.target).value)" /></label>
+          </div>
+          @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+          <button class="btn btn-primary btn-block" type="submit">Save card</button>
+        </form>
+      }
+    </section>
+  }
+</div>
+
+@if (s.seats().length) {
+  <div class="action-bar fixed-frame">
+    <div>
+      <div class="amount">{{ s.total() | currency: 'USD' }}</div>
+      <div class="tiny muted">Total</div>
+    </div>
+    <button class="btn btn-primary" (click)="pay()"><app-icon name="lock" [size]="16" />Pay Now</button>
+  </div>
+}

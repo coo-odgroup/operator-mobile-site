@@ -1,0 +1,4 @@
+.ticket { padding: 0; overflow: hidden; }
+.top { padding: 14px; background: var(--gradient); color: #fff; display: flex; justify-content: space-between; align-items: center; }
+.body { display: grid; justify-items: center; gap: 10px; padding: 16px; border-top: 2px dashed var(--line); }
+svg.qr { width: 160px; height: 160px; padding: 8px; background: #fff; border-radius: 10px; border: 1px solid var(--line); }

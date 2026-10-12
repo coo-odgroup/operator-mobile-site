@@ -1,0 +1,5 @@
+.x { color: var(--muted); }
+.dest { display: grid; gap: 0; padding: 0; overflow: hidden; text-align: left; }
+.img { height: 84px; display: grid; place-items: end start; padding: 8px 10px; color: #fff; font-weight: 700; }
+.foot { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; font-size: 12px; }
+.foot b { color: var(--brand); }

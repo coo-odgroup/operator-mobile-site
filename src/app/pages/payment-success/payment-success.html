@@ -1,0 +1,55 @@
+<div class="page">
+  <app-stepper [done]="true" />
+
+  <section class="hero">
+    <span class="ok-ring"><app-icon name="check" [size]="44" [stroke]="2.5" /></span>
+    <h2>Payment Successful!</h2>
+    <p class="small muted">Your booking has been confirmed. Ticket details have been sent to your email.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="card-title">Booking Information</h2>
+    <div class="kv"><span>Booking ID</span><span>{{ d().id }}</span></div>
+    <div class="kv"><span>Booking Date</span><span>{{ fmt(d().bookedOn) }}</span></div>
+    @if (d().pay) { <div class="kv"><span>Payment Method</span><span>{{ d().pay }}</span></div> }
+    @if (d().total !== undefined) { <div class="kv"><span>Amount Paid</span><span class="strong paid">{{ d().total | currency: 'USD' }}</span></div> }
+  </section>
+
+  <section class="card stack">
+    <h2 class="card-title" style="margin:0">Trip Details</h2>
+    <div class="row">
+      <span class="tile"><app-icon name="bus" /></span>
+      <span><span class="strong">{{ d().operator }}</span><br /><span class="tiny muted">{{ d().type }}</span></span>
+    </div>
+
+    <div class="tl">
+      <div><i></i><div class="strong">{{ d().from }} Central Station</div><div class="tiny muted">{{ d().dateShort }}, {{ d().depart }}</div></div>
+      <div><i class="end"></i><div class="strong">{{ d().to }} South Station</div><div class="tiny muted">{{ d().arriveLine }}</div></div>
+    </div>
+
+    <div class="grid-2 pax">
+      <div><span class="tiny muted">Passenger</span><div class="strong">{{ d().passenger }}</div></div>
+      <div><span class="tiny muted">Seats</span><div class="strong">{{ d().seats }}</div></div>
+    </div>
+
+    <ul class="notes">
+      <li><app-icon name="info" [size]="15" />Please arrive 30 minutes before departure</li>
+      <li><app-icon name="briefcase" [size]="15" />Luggage allowance: 2 pieces (up to 20kg each)</li>
+    </ul>
+  </section>
+
+  <div class="stack no-print" style="gap:10px">
+    <a class="btn btn-primary btn-block" routerLink="/tickets"><app-icon name="qr" [size]="18" />View Ticket</a>
+    <button class="btn btn-outline btn-block" (click)="printTicket()"><app-icon name="download" [size]="18" />Download PDF Ticket</button>
+    <a class="btn btn-outline btn-block" routerLink="/home">Back to Home</a>
+  </div>
+
+  <section class="share no-print">
+    <span class="small muted">Share your trip details</span>
+    <div class="row">
+      @for (o of shareOptions; track o.key) {
+        <button class="icon-btn" (click)="share(o.key)" [attr.aria-label]="o.label"><app-icon [name]="o.icon" [size]="18" /></button>
+      }
+    </div>
+  </section>
+</div>

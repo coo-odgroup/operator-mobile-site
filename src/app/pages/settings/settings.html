@@ -1,0 +1,80 @@
+<div class="page">
+  <section class="card who">
+    <span class="av"><app-icon name="user" [size]="24" /></span>
+    <div class="grow">
+      <div class="strong">{{ s.profile().name }}</div>
+      <div class="small muted">{{ s.profile().email }}</div>
+    </div>
+    <a class="btn btn-soft btn-sm" routerLink="/profile">Edit</a>
+  </section>
+
+  <h2 class="section-title">Account Settings</h2>
+  <section class="card group list">
+    <a class="list-row" routerLink="/profile">
+      <span class="tile"><app-icon name="user" /></span>
+      <span class="grow"><div class="t">Personal Information</div><div class="s">Manage your personal details</div></span>
+      <app-icon class="chev" name="chevron-right" [size]="18" />
+    </a>
+    <button class="list-row" (click)="soon('Security settings')">
+      <span class="tile ok"><app-icon name="lock" /></span>
+      <span class="grow"><div class="t">Security</div><div class="s">Password, PIN, biometrics</div></span>
+      <app-icon class="chev" name="chevron-right" [size]="18" />
+    </button>
+    <button class="list-row" (click)="soon('Payment methods')">
+      <span class="tile red"><app-icon name="card" /></span>
+      <span class="grow"><div class="t">Payment Methods</div><div class="s">Manage your payment options</div></span>
+      <app-icon class="chev" name="chevron-right" [size]="18" />
+    </button>
+  </section>
+
+  <h2 class="section-title">App Settings</h2>
+  <section class="card group list">
+    <div class="list-row sw" (click)="s.pushOn.set(!s.pushOn())">
+      <span class="tile"><app-icon name="bell" /></span>
+      <span class="grow"><div class="t">Notifications</div><div class="s">Manage notification preferences</div></span>
+      <span class="toggle" [class.on]="s.pushOn()" role="switch" [attr.aria-checked]="s.pushOn()"></span>
+    </div>
+    <button class="list-row" (click)="soon('Language selection')">
+      <span class="tile teal"><app-icon name="globe" /></span>
+      <span class="grow"><div class="t">Language</div><div class="s">English (US)</div></span>
+      <app-icon class="chev" name="chevron-right" [size]="18" />
+    </button>
+    <div class="list-row sw" (click)="s.setDark(!s.dark())">
+      <span class="tile red"><app-icon name="moon" /></span>
+      <span class="grow"><div class="t">Dark Mode</div><div class="s">{{ s.dark() ? 'On' : 'Off' }}</div></span>
+      <span class="toggle" [class.on]="s.dark()" role="switch" [attr.aria-checked]="s.dark()"></span>
+    </div>
+    <div class="list-row sw" (click)="s.location.set(!s.location())">
+      <span class="tile warn"><app-icon name="pin" /></span>
+      <span class="grow"><div class="t">Location Services</div><div class="s">Allow app to access location</div></span>
+      <span class="toggle" [class.on]="s.location()" role="switch" [attr.aria-checked]="s.location()"></span>
+    </div>
+  </section>
+
+  <h2 class="section-title">Support &amp; About</h2>
+  <section class="card group list">
+    <a class="list-row" routerLink="/support">
+      <span class="tile"><app-icon name="help" /></span>
+      <span class="grow"><div class="t">Help &amp; Support</div><div class="s">Get help with the app</div></span>
+      <app-icon class="chev" name="chevron-right" [size]="18" />
+    </a>
+    <button class="list-row" (click)="soon('Terms & Conditions')">
+      <span class="tile ok"><app-icon name="file" /></span>
+      <span class="grow"><div class="t">Terms &amp; Conditions</div><div class="s">Read our terms of service</div></span>
+      <app-icon class="chev" name="chevron-right" [size]="18" />
+    </button>
+    <button class="list-row" (click)="soon('Privacy Policy')">
+      <span class="tile red"><app-icon name="shield" /></span>
+      <span class="grow"><div class="t">Privacy Policy</div><div class="s">How we handle your data</div></span>
+      <app-icon class="chev" name="chevron-right" [size]="18" />
+    </button>
+    <div class="list-row">
+      <span class="tile warn"><app-icon name="info" /></span>
+      <span class="grow"><div class="t">About {{ s.brand }}</div><div class="s">Version 2.4.0</div></span>
+    </div>
+  </section>
+
+  <button class="btn btn-block" style="background:var(--danger);color:#fff" (click)="signOut()">
+    <app-icon name="logout" [size]="18" />Sign Out
+  </button>
+</div>

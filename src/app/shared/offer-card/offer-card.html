@@ -1,0 +1,12 @@
+<article class="card offer">
+  <span class="tile"><app-icon [name]="offer().icon" /></span>
+  <div class="grow">
+    <h3>{{ offer().title }}</h3>
+    <p class="small muted">{{ offer().desc }}</p>
+    <p class="tiny note"><app-icon name="clock" [size]="11" /> {{ offer().note }}</p>
+    @if (action()) {
+      <button class="btn btn-primary btn-sm" style="margin-top:8px;float:right" (click)="use()">Use Now</button>
+    }
+  </div>
+  <span class="badge">{{ offer().badge }}</span>
+</article>

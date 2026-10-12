@@ -1,0 +1,33 @@
+<div class="page">
+  <div class="row between">
+    <div class="chips" role="tablist" aria-label="Filter notifications">
+      @for (f of filters; track f.key) {
+        <button class="chip" role="tab" [class.on]="filter() === f.key" [attr.aria-selected]="filter() === f.key" (click)="filter.set(f.key)">{{ f.label }}</button>
+      }
+    </div>
+  </div>
+
+  @if (s.unread() > 0) {
+    <button class="mark small" (click)="s.markAllRead()"><app-icon name="check-all" [size]="16" />Mark all as read ({{ s.unread() }})</button>
+  }
+
+  @for (g of groups(); track g.name) {
+    <h2 class="section-title">{{ g.name }}</h2>
+    @for (n of g.items; track n.id) {
+      <button class="card item" [class.unread]="!n.read" (click)="s.markRead(n.id)">
+        <span class="tile" [class]="iconOf(n).tone"><app-icon [name]="iconOf(n).icon" /></span>
+        <span class="grow">
+          <span class="strong">{{ n.title }}</span>
+          <span class="small muted body">{{ n.body }}</span>
+          <span class="tiny muted">{{ n.when }}</span>
+        </span>
+        @if (!n.read) { <i class="pip" aria-label="Unread"></i> }
+      </button>
+    }
+  } @empty {
+    <div class="card empty">
+      <app-icon name="bell" [size]="34" />
+      <p>No notifications here yet.</p>
+    </div>
+  }
+</div>

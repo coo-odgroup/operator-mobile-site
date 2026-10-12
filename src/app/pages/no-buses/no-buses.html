@@ -1,0 +1,36 @@
+<div class="page">
+  <section class="hero">
+    <span class="art"><app-icon name="calendar-x" [size]="44" [stroke]="1.6" /></span>
+    <h2>No Buses Available</h2>
+    <p class="small muted">We couldn't find any buses for your selected route and date.</p>
+  </section>
+
+  @if (s.nearbyDates().length) {
+    <h2 class="section-title">Available on nearby dates</h2>
+    <div class="dates">
+      @for (d of s.nearbyDates(); track d.iso) {
+        <button class="card date" (click)="pickDate(d.iso)">
+          <b>{{ d.day }}</b>
+          <span class="tiny muted">{{ d.month }}</span>
+          <span class="price">{{ d.price | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+        </button>
+      }
+    </div>
+  }
+
+  @if (s.altRoutes().length) {
+    <h2 class="section-title">Alternative routes</h2>
+    @for (a of s.altRoutes(); track a.via) {
+      <button class="card alt row" (click)="pickAlt(a.via)">
+        <span class="grow">
+          <span class="strong">{{ a.label }}</span><br />
+          <span class="tiny muted">{{ a.duration }}</span>
+        </span>
+        <span class="price">{{ a.price | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+        <app-icon class="muted" name="chevron-right" [size]="18" />
+      </button>
+    }
+  }
+
+  <a class="btn btn-soft btn-block" routerLink="/search"><app-icon name="search" [size]="18" />Change search</a>
+</div>

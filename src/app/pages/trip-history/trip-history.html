@@ -1,0 +1,18 @@
+<div class="page">
+  @for (b of s.history(); track b.id) {
+    <article class="card stack">
+      <div class="row between">
+        <span class="strong">{{ short(b.from) }} → {{ short(b.to) }}</span>
+        <span class="chip chip-muted">{{ b.status }}</span>
+      </div>
+      <div class="row between small muted">
+        <span class="row"><app-icon name="calendar" [size]="14" />{{ fmt(b.date) }} · {{ b.time }}</span>
+        <span class="strong" style="color:var(--text)">{{ b.total | currency: 'USD' }}</span>
+      </div>
+      <div class="row between">
+        <span class="tiny muted">#{{ b.id }} · {{ b.seat }}</span>
+        <button class="btn btn-soft btn-sm" (click)="again(b)">Book again</button>
+      </div>
+    </article>
+  }
+</div>

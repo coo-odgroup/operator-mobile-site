@@ -1,0 +1,7 @@
+.hero { display: grid; justify-items: center; gap: 8px; text-align: center; padding: 18px 8px 4px; }
+.hero h2 { font-size: 20px; }
+.art { display: grid; place-items: center; width: 96px; height: 96px; border-radius: 24px; background: var(--brand-soft); color: var(--brand); }
+.dates { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.date { display: grid; justify-items: center; gap: 2px; padding: 12px 4px; b { font-size: 20px; } }
+.price { color: var(--brand); font-weight: 700; font-size: 13px; }
+.alt { width: 100%; text-align: left; }

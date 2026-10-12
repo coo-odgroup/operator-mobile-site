@@ -1,0 +1,49 @@
+<div class="page">
+  <section class="card stack">
+    <div class="row between">
+      <div>
+        <div class="strong" style="font-size:16px">{{ short(from()) }} → {{ short(to()) }}</div>
+        <div class="small muted">{{ fmt(s.search().date) }} · {{ s.search().passengers }}
+          {{ s.search().passengers === 1 ? 'Passenger' : 'Passengers' }}</div>
+      </div>
+      <button class="icon-btn" (click)="s.toggleSaved(from(), to())" [attr.aria-pressed]="saved()" aria-label="Save route">
+        <app-icon name="heart" [fill]="saved()" />
+      </button>
+    </div>
+    <div class="scroll">
+      @for (o of sorts; track o.key) {
+        <button class="chip" [class.on]="sort() === o.key" (click)="sort.set(o.key)">{{ o.label }}</button>
+      }
+    </div>
+  </section>
+
+  <p class="small muted">{{ list().length }} buses found</p>
+
+  @for (b of list(); track b.id) {
+    <article class="card stack">
+      <div class="row between">
+        <div>
+          <div class="strong">{{ b.operator }}</div>
+          <div class="tiny muted">{{ b.type }}</div>
+        </div>
+        <span class="rating"><app-icon name="star" [size]="12" [fill]="true" />{{ b.rating }}</span>
+      </div>
+      <div class="times">
+        <span><b>{{ b.depart }}</b><br /><span class="tiny muted">{{ short(from()) }}</span></span>
+        <span class="line"><span>{{ b.duration }}</span><i></i></span>
+        <span style="text-align:right"><b>{{ b.arrive }}</b><br /><span class="tiny muted">{{ short(to()) }}</span></span>
+      </div>
+      <div class="row" style="flex-wrap:wrap">
+        @for (a of b.amenities; track a) { <span class="chip chip-muted">{{ a }}</span> }
+      </div>
+      <div class="row between">
+        <span>
+          <span class="price">{{ b.price | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+          <span class="tiny muted"> / seat</span><br />
+          <span class="tiny" [style.color]="b.seatsLeft <= 8 ? 'var(--danger)' : 'var(--muted)'">{{ b.seatsLeft }} seats left</span>
+        </span>
+        <button class="btn btn-primary btn-sm" (click)="pick(b.id)">Select</button>
+      </div>
+    </article>
+  }
+</div>

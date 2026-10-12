@@ -1,0 +1,43 @@
+<div class="page">
+  <h2 class="section-title">Upcoming Trips</h2>
+  @for (b of s.bookings(); track b.id) {
+    <article class="card stack">
+      <div class="row between">
+        <span class="strong">{{ short(b.from) }} → {{ short(b.to) }}</span>
+        <span class="chip" [class.chip-ok]="b.status === 'Confirmed'" [class.chip-warn]="b.status === 'Pending'">{{ b.status }}</span>
+      </div>
+      <div class="row between small muted">
+        <span class="row"><app-icon name="calendar" [size]="14" />{{ fmt(b.date) }}</span>
+        <span class="row"><app-icon name="clock" [size]="14" />{{ b.time }}</span>
+      </div>
+      <div class="ref row between">
+        <span>
+          <span class="small strong">Booking #{{ b.id }}</span><br />
+          <span class="tiny muted">{{ b.seat }}</span>
+        </span>
+        @if (b.status === 'Confirmed') {
+          <a class="btn btn-primary btn-sm" routerLink="/tickets">View Ticket</a>
+        } @else {
+          <button class="btn btn-primary btn-sm" (click)="complete(b)">Complete Payment</button>
+        }
+      </div>
+    </article>
+  } @empty {
+    <div class="card empty">
+      <app-icon name="ticket" [size]="34" />
+      <p>No upcoming trips yet.</p>
+      <a class="btn btn-primary btn-sm" routerLink="/search">Book a trip</a>
+    </div>
+  }
+
+  <h2 class="section-title">Quick Actions</h2>
+  <div class="grid-2">
+    <a class="card quick" routerLink="/tickets">
+      <span class="tile"><app-icon name="qr" /></span>Show Ticket QR
+    </a>
+    <a class="card quick" routerLink="/search">
+      <span class="tile teal"><app-icon name="plus" /></span>Book New Trip
+    </a>
+  </div>
+  <a class="btn btn-soft btn-block" routerLink="/history"><app-icon name="clock" [size]="18" />View trip history</a>
+</div>

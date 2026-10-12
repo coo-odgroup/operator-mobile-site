@@ -1,0 +1,38 @@
+<div class="frame">
+  <main class="auth">
+    <header class="brand">
+      <span class="logo"><app-icon name="bus" [size]="36" /></span>
+      <h1>{{ s.brand }}</h1>
+      <p class="small muted">Sign in to your account</p>
+    </header>
+
+    <form class="stack" (submit)="$event.preventDefault(); submit()" novalidate>
+      <label class="field">Email
+        <span class="input"><app-icon name="mail" [size]="18" />
+          <input type="email" autocomplete="email" placeholder="Enter your email" [value]="email()" (input)="email.set($any($event.target).value)" /></span>
+      </label>
+
+      <label class="field">
+        <span class="row between">Password <button type="button" class="link" (click)="forgot()">Forgot Password?</button></span>
+        <span class="input"><app-icon name="lock" [size]="18" />
+          <input [type]="show() ? 'text' : 'password'" autocomplete="current-password" placeholder="Enter your password" [value]="password()" (input)="password.set($any($event.target).value)" />
+          <button type="button" class="eye" (click)="show.set(!show())" [attr.aria-label]="show() ? 'Hide password' : 'Show password'"><app-icon [name]="show() ? 'eye-off' : 'eye'" [size]="18" /></button></span>
+      </label>
+
+      <label class="row small"><input type="checkbox" [checked]="remember()" (change)="remember.set($any($event.target).checked)" /> Remember me</label>
+
+      @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+
+      <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+
+    <div class="or"><span>Or sign in with</span></div>
+    <div class="socials">
+      @for (p of social; track p.key) {
+        <button class="social" type="button" (click)="signInWith(p.key)" [attr.aria-label]="'Sign in with ' + p.key">{{ p.glyph }}</button>
+      }
+    </div>
+
+    <p class="small center muted foot">Don't have an account? <a routerLink="/signup" class="link">Sign Up</a></p>
+  </main>
+</div>

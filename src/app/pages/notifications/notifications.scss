@@ -1,0 +1,15 @@
+.chips { display: flex; gap: 8px; overflow-x: auto; }
+.chip { padding: 6px 14px; font-size: 12.5px; background: var(--surface); color: var(--muted); border: 1px solid var(--line); }
+.chip.on { background: var(--brand); color: #fff; border-color: var(--brand); }
+.mark { align-self: flex-end; display: inline-flex; align-items: center; gap: 6px; color: var(--brand); font-weight: 600; }
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  .grow { display: grid; gap: 2px; }
+  &.unread { border-left: 3px solid var(--brand); }
+}
+.body { display: block; }
+.pip { flex: none; width: 9px; height: 9px; margin-top: 6px; border-radius: 50%; background: var(--brand); }

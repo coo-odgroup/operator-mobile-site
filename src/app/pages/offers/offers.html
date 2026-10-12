@@ -1,0 +1,57 @@
+<div class="page">
+  <section class="card stack">
+    <div class="points">
+      <span class="small muted">Your Travel Points</span>
+      <span class="big"><app-icon name="star" [size]="24" [fill]="true" />{{ s.points | number }}</span>
+    </div>
+    <div class="progress" role="progressbar" [attr.aria-valuenow]="s.tierPercent()" aria-valuemin="0" aria-valuemax="100">
+      <i [style.width.%]="s.tierPercent()"></i>
+    </div>
+    <div class="levels">
+      <span>Current Level<br /><b class="strong" style="color:var(--text)">{{ s.currentTier().name }}</b></span>
+      <span style="text-align:right">Next Level<br />
+        <b class="strong" style="color:var(--brand)">{{ s.nextTier().name }} ({{ s.nextTier().at | number }} points to go)</b></span>
+    </div>
+  </section>
+
+  <h2 class="section-title">Available Offers</h2>
+  @for (o of s.offers; track o.code) {
+    <app-offer-card [offer]="o" [action]="true" />
+  }
+
+  <section class="card refer">
+    <span class="tile ok"><app-icon name="users" /></span>
+    <div class="grow">
+      <div class="strong">Refer a friend</div>
+      <p class="small muted">Get $15 when a friend books their first trip</p>
+      <p class="tiny muted">No expiration</p>
+    </div>
+    <button class="btn btn-primary btn-sm" (click)="share()"><app-icon name="share" [size]="14" />Share Invite</button>
+  </section>
+
+  <h2 class="section-title">Rewards You Can Unlock</h2>
+  @for (r of s.rewards; track r.title) {
+    <article class="card row">
+      <span class="tile warn"><app-icon [name]="r.icon" /></span>
+      <div class="grow stack" style="gap:6px">
+        <div class="strong">{{ r.title }}</div>
+        <div class="tiny muted">Unlock at {{ r.tier }} Level ({{ r.need | number }} points)</div>
+        <div class="progress" style="height:6px"><i [style.width.%]="pct(r.need)"></i></div>
+      </div>
+    </article>
+  }
+
+  <h2 class="section-title">Have a Promo Code?</h2>
+  <section class="card stack">
+    <div class="promo">
+      <input class="control" placeholder="Enter promo code" [value]="code()" (input)="code.set($any($event.target).value)" (keydown.enter)="apply()" />
+      <button class="btn btn-primary" (click)="apply()">Apply</button>
+    </div>
+    @if (s.promo(); as p) {
+      <p class="small row" style="color:var(--ok)">
+        <app-icon name="check-circle" [size]="16" />{{ p.label }} will be applied at checkout.
+        <button class="small" style="margin-left:auto;color:var(--muted)" (click)="s.clearPromo()">Remove</button>
+      </p>
+    }
+  </section>
+</div>

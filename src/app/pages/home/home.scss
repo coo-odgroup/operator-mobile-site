@@ -1,0 +1,9 @@
+.route { text-align: left; display: grid; gap: 10px; }
+.stops { position: relative; display: grid; gap: 14px; padding-left: 20px; font-weight: 600; font-size: 13px; }
+.stops::before { content: ''; position: absolute; left: 4px; top: 9px; bottom: 9px; width: 2px; background: var(--brand-soft); }
+.stop { position: relative; display: block; line-height: 18px; }
+.stop i { position: absolute; left: -20px; top: 4px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--brand); background: var(--surface); }
+.stop i.end { background: var(--brand); }
+.price { color: var(--brand); font-weight: 700; }
+.recent { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; }
+.recent .r { font-weight: 600; }

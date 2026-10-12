@@ -1,0 +1,4 @@
+.who { display: flex; align-items: center; gap: 12px; }
+.av { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); }
+.group { padding: 4px 14px; }
+.sw { cursor: pointer; }

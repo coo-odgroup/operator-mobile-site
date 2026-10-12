@@ -1,0 +1,42 @@
+<div class="page">
+  <app-stepper [current]="0" />
+
+  <section class="card stack">
+    <div class="row between">
+      <span class="strong">{{ s.bus().operator }}</span>
+      <span class="small muted">Pick {{ s.search().passengers }} {{ s.search().passengers === 1 ? 'seat' : 'seats' }}</span>
+    </div>
+    <div class="legend">
+      <span><i style="border:1.5px solid var(--brand)"></i>Available</span>
+      <span><i style="background:var(--brand)"></i>Selected</span>
+      <span><i style="background:var(--line)"></i>Booked</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="deck">
+      <div class="driver"><app-icon name="wheel" [size]="24" /></div>
+      @for (row of rows; track row) {
+        <div class="r">
+          @for (col of ['A', 'B']; track col) { <ng-container [ngTemplateOutlet]="seat" [ngTemplateOutletContext]="{ id: row + col }" /> }
+          <small>{{ row }}</small>
+          @for (col of ['C', 'D']; track col) { <ng-container [ngTemplateOutlet]="seat" [ngTemplateOutletContext]="{ id: row + col }" /> }
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="card stack">
+    <div class="kv"><span>Selected</span><span>{{ s.seats().length ? s.seats().join(', ') : 'None yet' }}</span></div>
+    <div class="kv"><span>Subtotal</span><span>{{ s.subtotal() | currency: 'USD' }}</span></div>
+    <button class="btn btn-primary btn-block" [disabled]="!s.seats().length" (click)="next()">
+      Continue <app-icon name="arrow-right" [size]="18" />
+    </button>
+  </section>
+</div>
+
+<ng-template #seat let-id="id">
+  <button class="seat" [class.booked]="isBooked(id)" [class.sel]="s.seats().includes(id)"
+    [disabled]="isBooked(id)" [attr.aria-pressed]="s.seats().includes(id)" [attr.aria-label]="'Seat ' + id"
+    (click)="s.toggleSeat(id)">{{ id }}</button>
+</ng-template>
