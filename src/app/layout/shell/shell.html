@@ -3,9 +3,16 @@
     @if (meta().back) {
       <button class="ib" (click)="back()" aria-label="Go back"><app-icon name="chevron-left" [size]="24" /></button>
     } @else {
-      <button class="ib" (click)="drawer.set(true)" aria-label="Open menu"><app-icon name="menu" [size]="24" /></button>
+      <button class="ib menu-btn" (click)="drawer.set(true)" aria-label="Open menu"><app-icon name="menu" [size]="24" /></button>
     }
+    <a class="site-logo" routerLink="/home"><span class="logo"><app-icon name="bus" [size]="20" /></span>{{ s.brand }}</a>
+    <nav class="site-nav" aria-label="Primary">
+      @for (n of siteNav; track n.label) {
+        <a [routerLink]="n.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ n.label }}</a>
+      }
+    </nav>
     <h1 class="title"><app-icon [name]="meta().icon" [size]="20" />{{ meta().title }}</h1>
+    <a class="btn btn-primary btn-sm login-btn" routerLink="/login"><app-icon name="user" [size]="15" />Login / Signup</a>
     <div class="actions">
       <a class="ib" routerLink="/search" aria-label="Search"><app-icon name="search" /></a>
       <a class="ib" [class.dot]="s.unread() > 0" routerLink="/notifications" [attr.aria-label]="s.unread() > 0 ? 'Notifications, ' + s.unread() + ' unread' : 'Notifications'"><app-icon name="bell" /></a>
@@ -17,7 +24,26 @@
     </div>
   </header>
 
+  @if (meta().title !== s.brand) {
+    <div class="page-head">
+      <div class="in"><a routerLink="/home">Home</a><app-icon name="chevron-right" [size]="14" /><b>{{ meta().title }}</b></div>
+    </div>
+  }
+
   <main><router-outlet /></main>
+
+  <footer class="site-footer">
+    <div class="cols">
+      <div>
+        <div class="f-brand">{{ s.brand }}</div>
+        <p>Odisha's No. 1 online bus ticket booking platform.</p>
+      </div>
+      <div><h4>Top Bus Routes</h4><a routerLink="/buses">Bhubaneswar to Puri</a><a routerLink="/buses">Bhubaneswar to Cuttack</a><a routerLink="/buses">Bhubaneswar to Berhampur</a></div>
+      <div><h4>Quick Links</h4><a routerLink="/offers">Offers</a><a routerLink="/bookings">Manage Booking</a><a routerLink="/support">Need Support</a></div>
+      <div><h4>Info</h4><a routerLink="/support">FAQ</a><a routerLink="/settings">Terms &amp; Conditions</a><a routerLink="/settings">Privacy Policy</a></div>
+    </div>
+    <div class="copy">© {{ s.brand }} (OD Tours and Travels). All rights reserved.</div>
+  </footer>
 
   @if (!meta().hideTabs) {
     <nav class="tabbar fixed-frame" aria-label="Primary">

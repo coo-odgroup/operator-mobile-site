@@ -48,3 +48,8 @@
 }
 
 .share { display: grid; justify-items: center; gap: 10px; }
+
+@media (min-width: 1024px) {
+  .actions-row { display: flex; flex-direction: row; justify-content: center; }
+  .actions-row .btn { width: auto; min-width: 220px; }
+}

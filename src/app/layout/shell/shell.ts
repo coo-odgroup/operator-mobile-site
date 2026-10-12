@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { Store } from '../../core/store';
 import { Icon } from '../../shared/icon/icon';
@@ -11,7 +11,7 @@ interface Meta { title: string; icon: string; tab: string; back: boolean; hideTa
 @Component({
   selector: 'app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, Icon],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Icon],
   styleUrl: './shell.scss',
   templateUrl: './shell.html',
 })
@@ -20,6 +20,14 @@ export class Shell {
   private readonly location = inject(Location);
   protected readonly s = inject(Store);
   protected readonly drawer = signal(false);
+
+  protected readonly siteNav = [
+    { label: 'Home', link: '/home' },
+    { label: 'Offers', link: '/offers' },
+    { label: 'Need Support', link: '/support' },
+    { label: 'FAQ', link: '/support' },
+    { label: 'Manage Booking', link: '/bookings' },
+  ];
 
   protected readonly tabs = [
     { key: 'home', label: 'Home', icon: 'home', link: '/home' },

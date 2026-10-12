@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page page--cols">
   <app-stepper [done]="true" />
 
   <section class="hero">
@@ -38,13 +38,13 @@
     </ul>
   </section>
 
-  <div class="stack no-print" style="gap:10px">
+  <div class="stack no-print full actions-row" style="gap:10px">
     <a class="btn btn-primary btn-block" routerLink="/tickets"><app-icon name="qr" [size]="18" />View Ticket</a>
     <button class="btn btn-outline btn-block" (click)="printTicket()"><app-icon name="download" [size]="18" />Download PDF Ticket</button>
     <a class="btn btn-outline btn-block" routerLink="/home">Back to Home</a>
   </div>
 
-  <section class="share no-print">
+  <section class="share no-print full">
     <span class="small muted">Share your trip details</span>
     <div class="row">
       @for (o of shareOptions; track o.key) {

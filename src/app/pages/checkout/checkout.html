@@ -8,6 +8,9 @@
   } @else {
     <app-stepper [current]="2" />
 
+    <div class="co-grid">
+    <div class="co-side">
+
     <section class="card">
       <h2 class="card-title">Order Summary</h2>
       <div class="kv"><span>Trip</span><span>{{ s.search().from || 'New York' }} - {{ s.search().to || 'Boston' }}</span></div>
@@ -36,6 +39,8 @@
       }
     </section>
 
+    </div>
+    <div class="co-main">
     <h2 class="section-title">Select Payment Method</h2>
     <section class="stack" role="radiogroup" aria-label="Payment method">
       @for (c of s.cards(); track c.id) {
@@ -70,6 +75,8 @@
         </form>
       }
     </section>
+    </div>
+    </div>
   }
 </div>
 

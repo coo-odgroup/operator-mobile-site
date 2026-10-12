@@ -155,3 +155,49 @@
   }
 }
 @keyframes pop { from { opacity: 0; transform: translateY(8px); } }
+
+// ---------- Desktop website chrome (hidden on mobile) ----------
+.site-logo, .site-nav, .login-btn, .page-head, .site-footer { display: none; }
+
+@media (min-width: 1024px) {
+  .frame { max-width: none; box-shadow: none; display: flex; flex-direction: column; background: var(--bg); }
+  main { flex: 1; min-width: 0; }
+
+  .topbar {
+    gap: 28px;
+    padding: 0 max(36px, calc((100% - 1180px) / 2 + 36px));
+    height: 68px;
+    color: var(--text);
+    background: var(--surface);
+    box-shadow: 0 1px 0 var(--line), 0 6px 20px rgba(13, 71, 161, 0.06);
+  }
+  .site-logo {
+    display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 800; color: var(--brand);
+    .logo { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; color: #fff; background: var(--gradient); }
+  }
+  .site-nav {
+    display: flex; gap: 6px; margin-left: 12px; flex: 1;
+    a { padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text); &:hover { background: var(--brand-soft); color: var(--brand); } &.active { color: var(--brand); font-weight: 600; } }
+  }
+  .login-btn { display: inline-flex; }
+  .title, .menu-btn, .tabbar, .drawer, .scrim { display: none !important; }
+  .topbar > .ib:first-child { display: none; }
+  .actions { gap: 6px; .ib { color: var(--brand); background: var(--brand-soft); &.dot::after { border-color: var(--surface); } } }
+
+  .page-head {
+    display: block; background: var(--surface); border-bottom: 1px solid var(--line);
+    .in { max-width: 1180px; margin: 0 auto; padding: 14px 36px; display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); b { color: var(--text); } a:hover { color: var(--brand); } }
+  }
+
+  .site-footer {
+    display: block; margin-top: 40px; color: #cfe0f5; background: #0b2a55;
+    .cols { max-width: 1180px; margin: 0 auto; padding: 44px 36px 28px; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; }
+    .f-brand { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    h4 { color: #fff; margin-bottom: 12px; font-size: 14px; }
+    a { display: block; padding: 4px 0; font-size: 13.5px; &:hover { color: #fff; } }
+    p { font-size: 13.5px; max-width: 280px; }
+    .copy { border-top: 1px solid rgba(255, 255, 255, 0.12); padding: 16px 36px; text-align: center; font-size: 12.5px; }
+  }
+
+  .toast { left: 50%; bottom: 28px; }
+}

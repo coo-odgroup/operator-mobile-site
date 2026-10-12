@@ -119,3 +119,7 @@
   font-weight: 700;
 }
 .score { display: inline-flex; align-items: center; gap: 4px; color: var(--warn); }
+
+@media (min-width: 1024px) {
+  .hero { margin: 0; border-radius: var(--radius); height: 240px; }
+}

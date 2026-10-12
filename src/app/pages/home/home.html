@@ -1,8 +1,30 @@
-<div class="page">
-  <app-search-form mode="simple" />
+<section class="d-hero">
+  <div class="d-hero-in">
+    <h1>Odisha's No. 1 Online Bus Ticket Booking Platform</h1>
+    <p class="d-sub">Book in seconds. Assured seats, instant e-tickets and fast refunds.</p>
+    <app-search-form mode="simple" />
+  </div>
+</section>
+
+<!-- Desktop-only: ODBUS Advantage -->
+<section class="d-only d-wrap">
+  <h2 class="d-h">ODBUS Advantage</h2>
+  <div class="adv">
+    @for (a of advantages; track a.t) {
+      <article class="card adv-card">
+        <span class="tile"><app-icon [name]="a.icon" [size]="22" /></span>
+        <h3>{{ a.t }}</h3>
+        <p class="small muted">{{ a.s }}</p>
+        <a routerLink="/support" class="more">Know More →</a>
+      </article>
+    }
+  </div>
+</section>
+
+<div class="page page--cols">
 
   <h2 class="section-title">Popular Routes</h2>
-  <div class="grid-2">
+  <div class="grid-2 grid-4">
     @for (r of s.popularRoutes; track r.from + r.to) {
       <button class="card route" (click)="pickRoute(r)">
         <div class="stops">
@@ -34,3 +56,34 @@
     <app-offer-card [offer]="o" />
   }
 </div>
+
+<!-- Desktop-only: app download + FAQ -->
+<section class="d-only d-wrap">
+  <div class="app-dl">
+    <div>
+      <h2>Book faster with the ODBUS app</h2>
+      <ul>
+        <li><app-icon name="check-circle" [size]="18" />Exclusive app-only offers</li>
+        <li><app-icon name="check-circle" [size]="18" />Live tickets and trip updates</li>
+        <li><app-icon name="check-circle" [size]="18" />Track and manage bookings in one tap</li>
+      </ul>
+      <button class="btn store" type="button" (click)="s.showToast('App store link goes here')">Get it on Google Play</button>
+    </div>
+    <svg class="qr" viewBox="0 0 21 21" shape-rendering="crispEdges" aria-hidden="true">
+      @for (c of qr; track $index) { <rect [attr.x]="c.x" [attr.y]="c.y" width="1" height="1" fill="#0d2a52" /> }
+    </svg>
+  </div>
+
+  <h2 class="d-h">Frequently Asked Questions</h2>
+  <div class="card list faq-box">
+    @for (f of faqs; track f.q) {
+      <div>
+        <button class="list-row" (click)="open.set(open() === f.q ? '' : f.q)" [attr.aria-expanded]="open() === f.q">
+          <span class="grow t">{{ f.q }}</span>
+          <app-icon class="chev" [name]="open() === f.q ? 'chevron-up' : 'chevron-down'" [size]="18" />
+        </button>
+        @if (open() === f.q) { <p class="small muted ans">{{ f.a }}</p> }
+      </div>
+    }
+  </div>
+</section>

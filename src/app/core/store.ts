@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 
 /** Change the brand name here (header, sidebar, settings). */
-export const BRAND = 'BusGo';
+export const BRAND = 'ODBUS';
 
 export const CITIES = ['New York', 'Boston', 'Philadelphia', 'Washington DC', 'Baltimore', 'Pittsburgh'];
 const SHORT: Record<string, string> = { 'New York': 'NYC', Philadelphia: 'Philly', 'Washington DC': 'DC' };

@@ -295,3 +295,102 @@ button.chip.on { background: var(--brand); color: #fff; }
   body { background: #fff; }
   .frame { box-shadow: none; max-width: none; }
 }
+
+// =====================================================================
+// Responsive helpers (mobile first). Desktop starts at 1024px.
+// Same pages, same markup: the layout just widens into columns.
+// =====================================================================
+.split { display: grid; gap: 14px; }
+.split > div { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+@media (min-width: 1024px) {
+  // Desktop uses the ODBUS website blue (theme colour #1976d2).
+  :root:not([data-theme='dark']) {
+    --brand: #1976d2;
+    --brand-2: #42a5f5;
+    --brand-dark: #0d47a1;
+    --brand-soft: #e3f0fc;
+    --bg: #f4f7fb;
+    --gradient: linear-gradient(135deg, #1565c0, #1976d2 55%, #42a5f5);
+  }
+  body { background: var(--bg); }
+
+  .page {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 36px 56px;
+    gap: 18px;
+  }
+  .page--bar { padding-bottom: 28px; }
+  .page--narrow { max-width: 820px; }
+  .page--form { max-width: 640px; }
+
+  // Multi-column page: cards flow into 2 columns, titles/hero/forms span all.
+  .page--cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 22px;
+    align-items: start;
+    > .section-title, > .full, > app-stepper, > app-search-form,
+    > .grid-2, > .empty, > .btn-block, > p, > .hero { grid-column: 1 / -1; }
+  }
+  .page--cols.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  .split { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; align-items: start; }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+  .card { padding: 18px; }
+  .section-title { font-size: 17px; margin-top: 10px; }
+
+  .btn:not(.btn-sm):hover { filter: brightness(1.05); }
+  .list-row:hover { background: var(--brand-soft); border-radius: 8px; }
+
+  // The fixed bottom action bar becomes a sticky bar inside the content column.
+  .action-bar.fixed-frame {
+    position: sticky;
+    left: auto;
+    transform: none;
+    width: auto;
+    max-width: none;
+    padding: 14px max(36px, calc((100% - 1180px) / 2 + 36px));
+    .btn { flex: none; min-width: 220px; }
+  }
+
+  // Auth pages: split screen with a brand panel.
+  .auth-frame {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    box-shadow: none;
+    background: var(--surface);
+  }
+  .auth-frame .auth-aside { display: flex; }
+  .auth-frame .auth {
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    max-width: 460px;
+    min-height: 0;
+    padding: 40px 24px;
+  }
+}
+
+.auth-aside {
+  display: none;
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  padding: 64px;
+  color: #fff;
+  background: var(--gradient);
+  h2 { font-size: 34px; line-height: 1.15; max-width: 440px; }
+  p { opacity: 0.9; max-width: 420px; font-size: 15px; }
+  ul { list-style: none; padding: 0; display: grid; gap: 12px; margin-top: 10px; }
+  li { display: flex; align-items: center; gap: 10px; font-size: 14.5px; }
+  .mark { display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; background: rgba(255, 255, 255, 0.2); }
+}

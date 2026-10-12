@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page page--cols">
   <app-search-form mode="full" />
 
   <h2 class="section-title">Recent Searches</h2>
@@ -19,7 +19,7 @@
   }
 
   <h2 class="section-title">Popular Destinations</h2>
-  <div class="grid-2">
+  <div class="grid-2 grid-4">
     @for (d of s.destinations; track d.city) {
       <button class="card dest" (click)="goTo(d.city)">
         <span class="img" [style.background]="d.tint">{{ d.city }}</span>

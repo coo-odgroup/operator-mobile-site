@@ -6,6 +6,7 @@
     <span class="road"></span>
   </section>
 
+  <div class="split">
   <section class="title row">
     <div class="grow">
       <h2>{{ b().operator }}</h2>
@@ -21,6 +22,7 @@
       <div><i class="end"></i><div class="strong">{{ to() }} South Station</div><div class="tiny muted">{{ dateShort() }}, {{ b().arrive }}</div></div>
     </div>
   </section>
+  </div>
 
   <h2 class="section-title">Amenities</h2>
   <section class="card amenities">
@@ -39,6 +41,8 @@
     }
   </div>
 
+  <div class="split">
+    <div>
   <h2 class="section-title">Pickup Points</h2>
   <section class="card list" role="radiogroup" aria-label="Pickup point">
     @for (p of s.pickupPoints(); track p.name; let i = $index) {
@@ -50,6 +54,8 @@
     }
   </section>
 
+    </div>
+    <div>
   <h2 class="section-title">Drop-off Points</h2>
   <section class="card list" role="radiogroup" aria-label="Drop-off point">
     @for (p of s.dropPoints(); track p.name; let i = $index) {
@@ -61,6 +67,11 @@
     }
   </section>
 
+    </div>
+  </div>
+
+  <div class="split">
+    <div>
   <h2 class="section-title">Cancellation Policy</h2>
   <section class="card policy">
     @for (c of s.cancellation; track c.text) {
@@ -68,6 +79,8 @@
     }
   </section>
 
+    </div>
+    <div>
   <h2 class="section-title">Reviews</h2>
   @for (r of s.reviews; track r.name) {
     <article class="card stack review">
@@ -79,6 +92,8 @@
       <p class="small muted">{{ r.text }}</p>
     </article>
   }
+    </div>
+  </div>
 </div>
 
 <div class="action-bar fixed-frame">

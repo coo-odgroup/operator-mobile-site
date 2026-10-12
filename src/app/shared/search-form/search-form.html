@@ -1,4 +1,4 @@
-<form class="card stack" (submit)="go($event)" novalidate>
+<form class="card stack" [class.simple]="mode() === 'simple'" (submit)="go($event)" novalidate>
   <h2 class="card-title" style="margin:0">
     <app-icon name="search" />{{ mode() === 'simple' ? 'Find Your Bus' : 'Find Your Trip' }}
   </h2>
@@ -24,7 +24,7 @@
   </label>
 
   <button type="button" class="btn btn-soft btn-sm" style="justify-self:end" (click)="s.swapCities()">
-    <app-icon name="swap" [size]="15" />Swap cities
+    <app-icon name="swap" [size]="15" /><span class="sw-t">Swap cities</span>
   </button>
 
   @if (mode() === 'simple') {
@@ -32,6 +32,10 @@
       <span class="lbl"><app-icon name="calendar" [size]="14" />Date of Journey</span>
       <input class="control" type="date" [min]="today" [value]="s.search().date" (change)="set('date', $any($event.target).value)" />
     </label>
+    <div class="quick">
+      <button type="button" class="chip" [class.on]="s.search().date === today" (click)="quick(0)">Today</button>
+      <button type="button" class="chip" [class.on]="s.search().date === tomorrow" (click)="quick(1)">Tomorrow</button>
+    </div>
   } @else {
     <div class="grid-2">
       <label class="field">

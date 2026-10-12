@@ -1,5 +1,5 @@
-<div class="page">
-  <section class="card stack">
+<div class="page page--cols">
+  <section class="card stack full">
     <div class="points">
       <span class="small muted">Your Travel Points</span>
       <span class="big"><app-icon name="star" [size]="24" [fill]="true" />{{ s.points | number }}</span>
@@ -19,7 +19,7 @@
     <app-offer-card [offer]="o" [action]="true" />
   }
 
-  <section class="card refer">
+  <section class="card refer full">
     <span class="tile ok"><app-icon name="users" /></span>
     <div class="grow">
       <div class="strong">Refer a friend</div>
@@ -42,7 +42,7 @@
   }
 
   <h2 class="section-title">Have a Promo Code?</h2>
-  <section class="card stack">
+  <section class="card stack full">
     <div class="promo">
       <input class="control" placeholder="Enter promo code" [value]="code()" (input)="code.set($any($event.target).value)" (keydown.enter)="apply()" />
       <button class="btn btn-primary" (click)="apply()">Apply</button>

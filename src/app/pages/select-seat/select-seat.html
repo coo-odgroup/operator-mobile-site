@@ -1,7 +1,7 @@
-<div class="page">
+<div class="page seats">
   <app-stepper [current]="0" />
 
-  <section class="card stack">
+  <section class="card stack seat-info">
     <div class="row between">
       <span class="strong">{{ s.bus().operator }}</span>
       <span class="small muted">Pick {{ s.search().passengers }} {{ s.search().passengers === 1 ? 'seat' : 'seats' }}</span>
@@ -13,7 +13,7 @@
     </div>
   </section>
 
-  <section class="card">
+  <section class="card seat-deck">
     <div class="deck">
       <div class="driver"><app-icon name="wheel" [size]="24" /></div>
       @for (row of rows; track row) {
@@ -26,7 +26,7 @@
     </div>
   </section>
 
-  <section class="card stack">
+  <section class="card stack seat-sum">
     <div class="kv"><span>Selected</span><span>{{ s.seats().length ? s.seats().join(', ') : 'None yet' }}</span></div>
     <div class="kv"><span>Subtotal</span><span>{{ s.subtotal() | currency: 'USD' }}</span></div>
     <button class="btn btn-primary btn-block" [disabled]="!s.seats().length" (click)="next()">

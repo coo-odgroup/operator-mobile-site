@@ -7,3 +7,38 @@
 .price { color: var(--brand); font-weight: 700; }
 .recent { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; }
 .recent .r { font-weight: 600; }
+
+// ---- mobile: hero wrapper is just spacing ----
+.d-hero { padding: 14px 14px 0; }
+.d-hero h1, .d-sub, .d-only { display: none; }
+
+@media (min-width: 1024px) {
+  .d-hero {
+    padding: 56px 0 64px;
+    background: linear-gradient(135deg, #0d47a1, var(--brand) 60%, var(--brand-2));
+  }
+  .d-hero-in { max-width: 1180px; margin: 0 auto; padding: 0 36px; }
+  .d-hero h1 { display: block; color: #fff; font-size: 40px; line-height: 1.15; max-width: 760px; }
+  .d-sub { display: block; color: rgba(255, 255, 255, 0.88); font-size: 16px; margin: 10px 0 28px; }
+
+  .d-only { display: block; }
+  .d-wrap { max-width: 1180px; margin: 0 auto; padding: 8px 36px 12px; }
+  .d-h { font-size: 24px; margin: 28px 0 18px; }
+  .adv { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .adv-card { display: grid; gap: 8px; align-content: start; }
+  .adv-card h3 { font-size: 16px; }
+  .more { color: var(--brand); font-weight: 600; font-size: 13px; }
+
+  .app-dl {
+    display: flex; align-items: center; justify-content: space-between; gap: 32px;
+    margin-top: 36px; padding: 32px 40px; border-radius: 18px; color: #fff;
+    background: linear-gradient(135deg, #0d47a1, var(--brand));
+    h2 { font-size: 26px; margin-bottom: 14px; }
+    ul { list-style: none; padding: 0; display: grid; gap: 10px; margin-bottom: 20px; }
+    li { display: flex; align-items: center; gap: 10px; }
+    .store { background: #fff; color: var(--brand); }
+    .qr { width: 130px; height: 130px; padding: 8px; background: #fff; border-radius: 12px; flex: none; }
+  }
+  .faq-box { padding: 6px 18px; }
+  .ans { padding: 0 4px 12px; }
+}

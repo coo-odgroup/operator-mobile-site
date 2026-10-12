@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page page--cols">
   <section class="card hero">
     <div class="av">
       <app-icon name="user" [size]="40" />
@@ -21,7 +21,7 @@
     </div>
   </section>
 
-  <section class="card">
+  <section class="card full">
     <div class="row between" style="margin-bottom:6px">
       <h2 class="strong" style="color:var(--brand);font-size:15px">Personal Information</h2>
       @if (editing()) {
@@ -60,14 +60,14 @@
   </section>
 
   <h2 class="section-title">Travel Stats</h2>
-  <section class="card stats">
+  <section class="card stats full">
     <div><b>12</b><span class="tiny muted">Total Trips</span></div>
     <div><b>1,250</b><span class="tiny muted">Miles</span></div>
     <div><b>$480</b><span class="tiny muted">Spent</span></div>
   </section>
 
   <h2 class="section-title">Preferences</h2>
-  <section class="card list" style="padding:4px 14px">
+  <section class="card list full" style="padding:4px 14px">
     @for (p of prefs; track p.t) {
       <a class="list-row" routerLink="/settings">
         <span class="tile" [class]="p.tone"><app-icon [name]="p.icon" /></span>
