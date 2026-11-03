@@ -5,7 +5,8 @@ Mobile-first bus-booking site built from the 14 design screens. Standalone compo
 ```bash
 npm install
 npm start          # http://localhost:4200
-npm run build      # dist/busgo-mobile/browser
+npm run build      # SSR output in dist/busgo-mobile
+npm run serve:ssr  # http://localhost:4000
 npm test
 ```
 

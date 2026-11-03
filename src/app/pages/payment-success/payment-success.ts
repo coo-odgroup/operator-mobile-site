@@ -1,5 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Store, fmtDate, short, todayIso } from '../../core/store';
 import { Icon } from '../../shared/icon/icon';
@@ -13,6 +14,7 @@ import { Stepper } from '../../shared/stepper/stepper';
   styleUrl: './payment-success.scss',
 })
 export class PaymentSuccess {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   protected readonly s = inject(Store);
   protected readonly short = short;
   protected readonly fmt = fmtDate;
@@ -46,6 +48,7 @@ export class PaymentSuccess {
   });
 
   protected async share(kind: string) {
+    if (!this.isBrowser) return;
     const d = this.d();
     const text = `My ${this.s.brand} trip: ${d.from} → ${d.to} on ${d.dateShort}, booking #${d.id}`;
     try {
@@ -66,5 +69,5 @@ export class PaymentSuccess {
   }
 
   /** "Download PDF Ticket": opens the print dialog, where the user can choose Save as PDF. */
-  protected printTicket() { window.print(); }
+  protected printTicket() { if (this.isBrowser) window.print(); }
 }

@@ -1,4 +1,5 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 /** Change the brand name here (header, sidebar, settings). */
 export const BRAND = 'ODBUS';
@@ -118,6 +119,7 @@ export const BOOKED_SEATS = ['1A', '2C', '3B', '3C', '5D', '6A', '6B', '8C', '9D
 
 @Injectable({ providedIn: 'root' })
 export class Store {
+  private readonly document = inject(DOCUMENT);
   readonly brand = BRAND;
   readonly cities = CITIES;
   readonly points = 2450;
@@ -405,7 +407,7 @@ export class Store {
 
   setDark(on: boolean) {
     this.dark.set(on);
-    document.documentElement.dataset['theme'] = on ? 'dark' : 'light';
+    this.document.documentElement.dataset['theme'] = on ? 'dark' : 'light';
   }
 
   // ----- saved cards (sample, in-memory; only the last 4 digits are kept) -----

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { RenderMode, ServerRoute } from '@angular/ssr';
 import { Shell } from './layout/shell/shell';
 
 // data.title / icon / tab / back drive the shared header and bottom tab bar.
@@ -42,4 +43,8 @@ export const routes: Routes = [
       { path: '**', redirectTo: 'home' },
     ],
   },
+];
+
+export const serverRoutes: ServerRoute[] = [
+  { path: '**', renderMode: RenderMode.Server },
 ];

@@ -1,5 +1,5 @@
-import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, PLATFORM_ID, signal } from '@angular/core';
 import { Store } from '../../core/store';
 import { Icon } from '../../shared/icon/icon';
 import { OfferCard } from '../../shared/offer-card/offer-card';
@@ -12,6 +12,7 @@ import { OfferCard } from '../../shared/offer-card/offer-card';
   templateUrl: './offers.html',
 })
 export class Offers {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   protected readonly s = inject(Store);
   protected readonly code = signal('');
 
@@ -23,6 +24,7 @@ export class Offers {
   }
 
   protected async share() {
+    if (!this.isBrowser) return;
     const text = `Join me on ${this.s.brand} and get $15 off your first trip!`;
     try {
       if (navigator.share) await navigator.share({ title: this.s.brand, text, url: location.origin });

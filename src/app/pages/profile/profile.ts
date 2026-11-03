@@ -1,5 +1,5 @@
-import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, PLATFORM_ID, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Profile, Store, fmtDate } from '../../core/store';
 import { Icon } from '../../shared/icon/icon';
@@ -12,6 +12,7 @@ import { Icon } from '../../shared/icon/icon';
   templateUrl: './profile.html',
 })
 export class ProfilePage {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   protected readonly s = inject(Store);
   private readonly router = inject(Router);
   protected readonly fmt = fmtDate;
@@ -40,6 +41,7 @@ export class ProfilePage {
   }
 
   protected download() {
+    if (!this.isBrowser) return;
     const data = { profile: this.s.profile(), bookings: this.s.bookings(), history: this.s.history(), points: this.s.points };
     const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
     const a = document.createElement('a');

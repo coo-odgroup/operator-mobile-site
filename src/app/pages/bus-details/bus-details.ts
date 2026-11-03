@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store, short } from '../../core/store';
 import { Icon } from '../../shared/icon/icon';
@@ -13,6 +14,7 @@ import { Icon } from '../../shared/icon/icon';
   styleUrl: './bus-details.scss',
 })
 export class BusDetails {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   protected readonly s = inject(Store);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
@@ -36,11 +38,12 @@ export class BusDetails {
   protected initial(name: string) { return name.charAt(0); }
 
   protected back() {
-    if (history.length > 1) this.location.back();
+    if (this.isBrowser && history.length > 1) this.location.back();
     else this.router.navigateByUrl('/buses');
   }
 
   protected async share() {
+    if (!this.isBrowser) return;
     const text = `${this.b().operator}: ${this.from()} → ${this.to()}, ${this.dateShort()} at ${this.b().depart}`;
     try {
       if (navigator.share) await navigator.share({ title: this.s.brand, text });

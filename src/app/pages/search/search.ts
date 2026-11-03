@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { RecentSearch, Store, fmtDate, short } from '../../core/store';
 import { Icon } from '../../shared/icon/icon';
@@ -12,6 +13,7 @@ import { SearchForm } from '../../shared/search-form/search-form';
   templateUrl: './search.html',
 })
 export class SearchPage {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   protected readonly s = inject(Store);
   private readonly router = inject(Router);
   protected readonly short = short;
@@ -24,6 +26,6 @@ export class SearchPage {
   /** Tapping a destination pre-fills "To" and scrolls the user back to the form. */
   protected goTo(city: string) {
     this.s.patchSearch({ to: city, from: this.s.search().from === city ? '' : this.s.search().from });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (this.isBrowser) window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
