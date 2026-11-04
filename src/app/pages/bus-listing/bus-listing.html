@@ -6,44 +6,147 @@
         <div class="small muted">{{ fmt(s.search().date) }} · {{ s.search().passengers }}
           {{ s.search().passengers === 1 ? 'Passenger' : 'Passengers' }}</div>
       </div>
-      <button class="icon-btn" (click)="s.toggleSaved(from(), to())" [attr.aria-pressed]="saved()" aria-label="Save route">
+      <button class="icon-btn" (click)="s.toggleSaved(from(), to())" [attr.aria-pressed]="saved()"
+        aria-label="Save route">
         <app-icon name="heart" [fill]="saved()" />
       </button>
     </div>
     <div class="scroll">
       @for (o of sorts; track o.key) {
-        <button class="chip" [class.on]="sort() === o.key" (click)="sort.set(o.key)">{{ o.label }}</button>
+      <button class="chip" [class.on]="sort() === o.key" (click)="sort.set(o.key)">{{ o.label }}</button>
       }
     </div>
   </section>
 
-  <p class="small muted">{{ list().length }} buses found</p>
+  <div class="listing full">
+    <!-- Left: one filter card -->
+    <aside class="card filters" [class.open]="filtersOpen()" aria-label="Filters">
+      <div class="f-head">
+        <button class="f-toggle" (click)="filtersOpen.set(!filtersOpen())" [attr.aria-expanded]="filtersOpen()">
+          <span class="strong">Filters</span>
+          @if (activeCount()) { <span class="f-count">{{ activeCount() }}</span> }
+          <span class="f-caret" aria-hidden="true"></span>
+        </button>
+        <button class="f-clear" (click)="clearFilters()" [disabled]="!activeCount()">Clear all</button>
+      </div>
 
-  @for (b of list(); track b.id) {
-    <article class="card stack">
-      <div class="row between">
-        <div>
-          <div class="strong">{{ b.operator }}</div>
-          <div class="tiny muted">{{ b.type }}</div>
+      <div class="f-body">
+        <!-- 1. Bus type -->
+        <section class="f-sec">
+          <h3 class="f-title">Bus Type</h3>
+          <div class="f-types">
+            @for (t of busTypes; track t.key) {
+            <button class="f-type" [class.on]="typeSel().includes(t.key)" (click)="toggleType(t.key)"
+              [attr.aria-pressed]="typeSel().includes(t.key)">{{ t.label }}</button>
+            }
+          </div>
+        </section>
+
+        <!-- 2. Price range -->
+        <section class="f-sec">
+          <h3 class="f-title">Price Range</h3>
+          @if (bounds().max > bounds().min) {
+          <div class="f-range">
+            <div class="f-track"></div>
+            <div class="f-fill" [style.left.%]="((priceMin() - bounds().min) / (bounds().max - bounds().min)) * 100"
+              [style.right.%]="100 - ((priceMax() - bounds().min) / (bounds().max - bounds().min)) * 100"></div>
+            <input type="range" [min]="bounds().min" [max]="bounds().max" step="1" [value]="priceMin()"
+              (input)="setMin($any($event.target).value)" aria-label="Minimum price" />
+            <input type="range" [min]="bounds().min" [max]="bounds().max" step="1" [value]="priceMax()"
+              (input)="setMax($any($event.target).value)" aria-label="Maximum price" />
+          </div>
+          }
+          <div class="row between small muted">
+            <span>{{ priceMin() | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+            <span>{{ priceMax() | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+          </div>
+        </section>
+
+        <!-- 3. Departure time -->
+        <section class="f-sec">
+          <h3 class="f-title">Departure Time</h3>
+          <div class="f-slots">
+            @for (d of departSlots; track d.key) {
+            <button class="f-slot" [class.on]="slotSel().includes(d.key)" (click)="toggleSlot(d.key)"
+              [attr.aria-pressed]="slotSel().includes(d.key)">{{ d.label }}</button>
+            }
+          </div>
+        </section>
+
+        <!-- 4. Boarding point -->
+        <section class="f-sec f-acc">
+          <button class="f-acc-head" (click)="boardOpen.set(!boardOpen())" [attr.aria-expanded]="boardOpen()">
+            <span>Boarding Point @if (boardSel().length) { <span class="f-count">{{ boardSel().length }}</span> }</span>
+            <span class="f-caret" [class.up]="boardOpen()" aria-hidden="true"></span>
+          </button>
+          @if (boardOpen()) {
+          <div class="f-checks">
+            @for (p of boardingPoints(); track p) {
+            <label class="f-check"><input type="checkbox" [checked]="boardSel().includes(p)"
+                (change)="toggleBoard(p)" /> {{ p }}</label>
+            }
+          </div>
+          }
+        </section>
+
+        <!-- 5. Dropping point -->
+        <section class="f-sec f-acc">
+          <button class="f-acc-head" (click)="dropOpen.set(!dropOpen())" [attr.aria-expanded]="dropOpen()">
+            <span>Dropping Point @if (dropSel().length) { <span class="f-count">{{ dropSel().length }}</span> }</span>
+            <span class="f-caret" [class.up]="dropOpen()" aria-hidden="true"></span>
+          </button>
+          @if (dropOpen()) {
+          <div class="f-checks">
+            @for (p of droppingPoints(); track p) {
+            <label class="f-check"><input type="checkbox" [checked]="dropSel().includes(p)" (change)="toggleDrop(p)" />
+              {{ p }}</label>
+            }
+          </div>
+          }
+        </section>
+      </div>
+    </aside>
+
+    <!-- Right: results (listing cards unchanged) -->
+    <div class="results">
+      <p class="small muted">{{ list().length }} buses found</p>
+
+      @if (!list().length && s.buses().length) {
+      <div class="empty">
+        <span class="strong">No buses match these filters</span>
+        <button class="btn btn-soft btn-sm" (click)="clearFilters()">Clear all filters</button>
+      </div>
+      }
+
+      @for (b of list(); track b.id) {
+      <article class="card stack">
+        <div class="row between">
+          <div>
+            <div class="strong">{{ b.operator }}</div>
+            <div class="tiny muted">{{ b.type }}</div>
+          </div>
+          <span class="rating"><app-icon name="star" [size]="12" [fill]="true" />{{ b.rating }}</span>
         </div>
-        <span class="rating"><app-icon name="star" [size]="12" [fill]="true" />{{ b.rating }}</span>
-      </div>
-      <div class="times">
-        <span><b>{{ b.depart }}</b><br /><span class="tiny muted">{{ short(from()) }}</span></span>
-        <span class="line"><span>{{ b.duration }}</span><i></i></span>
-        <span style="text-align:right"><b>{{ b.arrive }}</b><br /><span class="tiny muted">{{ short(to()) }}</span></span>
-      </div>
-      <div class="row" style="flex-wrap:wrap">
-        @for (a of b.amenities; track a) { <span class="chip chip-muted">{{ a }}</span> }
-      </div>
-      <div class="row between">
-        <span>
-          <span class="price">{{ b.price | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
-          <span class="tiny muted"> / seat</span><br />
-          <span class="tiny" [style.color]="b.seatsLeft <= 8 ? 'var(--danger)' : 'var(--muted)'">{{ b.seatsLeft }} seats left</span>
-        </span>
-        <button class="btn btn-primary btn-sm" (click)="pick(b.id)">Select</button>
-      </div>
-    </article>
-  }
+        <div class="times">
+          <span><b>{{ b.depart }}</b><br /><span class="tiny muted">{{ short(from()) }}</span></span>
+          <span class="line"><span>{{ b.duration }}</span><i></i></span>
+          <span style="text-align:right"><b>{{ b.arrive }}</b><br /><span class="tiny muted">{{ short(to())
+              }}</span></span>
+        </div>
+        <div class="row" style="flex-wrap:wrap">
+          @for (a of b.amenities; track a) { <span class="chip chip-muted">{{ a }}</span> }
+        </div>
+        <div class="row between">
+          <span>
+            <span class="price">{{ b.price | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+            <span class="tiny muted"> / seat</span><br />
+            <span class="tiny" [style.color]="b.seatsLeft <= 8 ? 'var(--danger)' : 'var(--muted)'">{{ b.seatsLeft }}
+              seats left</span>
+          </span>
+          <button class="btn btn-primary btn-sm" (click)="pick(b.id)">Select</button>
+        </div>
+      </article>
+      }
+    </div>
+  </div>
 </div>

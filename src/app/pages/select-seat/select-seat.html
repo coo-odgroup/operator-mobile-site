@@ -4,7 +4,7 @@
   <section class="card stack seat-info">
     <div class="row between">
       <span class="strong">{{ s.bus().operator }}</span>
-      <span class="small muted">Pick {{ s.search().passengers }} {{ s.search().passengers === 1 ? 'seat' : 'seats' }}</span>
+      <span class="small muted">Select up to {{ max }} seats · {{ s.seats().length }} selected</span>
     </div>
     <div class="legend">
       <span><i style="border:1.5px solid var(--brand)"></i>Available</span>
@@ -14,16 +14,42 @@
   </section>
 
   <section class="card seat-deck">
-    <div class="deck">
-      <div class="driver"><app-icon name="wheel" [size]="24" /></div>
-      @for (row of rows; track row) {
-        <div class="r">
-          @for (col of ['A', 'B']; track col) { <ng-container [ngTemplateOutlet]="seat" [ngTemplateOutletContext]="{ id: row + col }" /> }
-          <small>{{ row }}</small>
-          @for (col of ['C', 'D']; track col) { <ng-container [ngTemplateOutlet]="seat" [ngTemplateOutletContext]="{ id: row + col }" /> }
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    } @else {
+      <!-- Mobile: Lower | Upper tabs (hidden on desktop, where both decks are visible) -->
+      @if (decks().length > 1) {
+        <div class="deck-tabs" role="tablist" aria-label="Deck">
+          @for (d of decks(); track d.key) {
+            <button class="deck-tab" type="button" role="tab" [class.on]="active() === d.key"
+              [attr.aria-selected]="active() === d.key" (click)="active.set(d.key)">{{ d.title }}</button>
+          }
         </div>
       }
-    </div>
+
+      <div class="decks">
+        @for (d of decks(); track d.key) {
+          <div class="deck-col" [class.show]="decks().length === 1 || active() === d.key">
+            <div class="deck">
+              <div class="driver">
+                <span class="deck-title">{{ d.title }}</span>
+                @if (d.hasDriver) { <app-icon name="wheel" [size]="24" /> }
+              </div>
+              <div class="grid" [style.grid-template-columns]="'repeat(' + d.cols + ', var(--cw))'">
+                @for (c of d.cells; track c.id) {
+                  <label class="seat" [class.sleeper]="c.kind === 'sleeper'" [class.booked]="c.booked" [class.sel]="isSel(c)"
+                    [style.grid-row]="c.row + ' / span ' + c.rowSpan" [style.grid-column]="c.col">
+                    <input type="checkbox" [checked]="isSel(c)" [disabled]="c.booked" (change)="onToggle(c, $event)"
+                      [attr.aria-label]="(c.kind === 'sleeper' ? 'Sleeper ' : 'Seat ') + c.id + (c.booked ? ', booked' : '')" />
+                    <span>{{ c.id }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
   </section>
 
   <section class="card stack seat-sum">
@@ -34,9 +60,3 @@
     </button>
   </section>
 </div>
-
-<ng-template #seat let-id="id">
-  <button class="seat" [class.booked]="isBooked(id)" [class.sel]="s.seats().includes(id)"
-    [disabled]="isBooked(id)" [attr.aria-pressed]="s.seats().includes(id)" [attr.aria-label]="'Seat ' + id"
-    (click)="s.toggleSeat(id)">{{ id }}</button>
-</ng-template>

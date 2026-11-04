@@ -299,7 +299,9 @@ export class Store {
     });
   }
   readonly promo = signal<Promo | null>(null);
-  readonly subtotal = computed(() => this.bus().price * this.seats().length);
+  /** Per-seat fares published by the seat map (seat id -> price). Seats not listed fall back to the bus fare. */
+  readonly seatPrices = signal<Record<string, number>>({});
+  readonly subtotal = computed(() => this.seats().reduce((sum, id) => sum + (this.seatPrices()[id] ?? this.bus().price), 0));
   readonly fee = computed(() => (this.seats().length ? 2.5 : 0));
   readonly discount = computed(() => {
     const p = this.promo();
