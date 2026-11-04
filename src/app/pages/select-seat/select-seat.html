@@ -9,7 +9,9 @@
     <div class="legend">
       <span><i style="border:1.5px solid var(--brand)"></i>Available</span>
       <span><i style="background:var(--brand)"></i>Selected</span>
-      <span><i style="background:var(--line)"></i>Booked</span>
+      <span><i style="background:var(--line)"></i>Not available</span>
+      <span><i class="gents-dot"></i>Gents</span>
+      <span><i class="ladies-dot"></i>Ladies</span>
     </div>
   </section>
 
@@ -37,10 +39,10 @@
               </div>
               <div class="grid" [style.grid-template-columns]="'repeat(' + d.cols + ', var(--cw))'">
                 @for (c of d.cells; track c.id) {
-                  <label class="seat" [class.sleeper]="c.kind === 'sleeper'" [class.booked]="c.booked" [class.sel]="isSel(c)"
+                  <label class="seat" [class.sleeper]="c.kind === 'sleeper'" [class.booked]="c.booked" [class.ladies]="c.booked && c.gender === 'F'" [class.gents]="c.booked && c.gender === 'M'" [class.sel]="isSel(c)"
                     [style.grid-row]="c.row + ' / span ' + c.rowSpan" [style.grid-column]="c.col">
                     <input type="checkbox" [checked]="isSel(c)" [disabled]="c.booked" (change)="onToggle(c, $event)"
-                      [attr.aria-label]="(c.kind === 'sleeper' ? 'Sleeper ' : 'Seat ') + c.id + (c.booked ? ', booked' : '')" />
+                      [attr.aria-label]="(c.kind === 'sleeper' ? 'Sleeper ' : 'Seat ') + c.id + (c.booked ? (c.gender === 'F' ? ', booked by a lady' : c.gender === 'M' ? ', booked by a gent' : ', not available') : '')" />
                     <span>{{ c.id }}</span>
                   </label>
                 }

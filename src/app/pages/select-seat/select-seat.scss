@@ -6,9 +6,32 @@
 // seat width and row height; a sleeper spans two rows
 .legend {
   display: flex;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 6px 14px;
   font-size: 11.5px;
   color: var(--muted);
+}
+
+// Seats booked by a lady are tinted pink (backend Gender "F"); other booked seats stay grey.
+.ladies-dot,
+.seat.booked.ladies {
+  background: #fde8f2;
+  border-color: #f2b8d3;
+}
+
+.seat.booked.ladies {
+  color: #b83b7b;
+}
+
+// Seats booked by a gent (backend Gender "M") are tinted blue.
+.gents-dot,
+.seat.booked.gents {
+  background: #e3efff;
+  border-color: #a9cbf5;
+}
+
+.seat.booked.gents {
+  color: #1f5fae;
 }
 
 .legend i {

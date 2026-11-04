@@ -1,3 +1,5 @@
+import { SAMPLE_API_LAYOUT } from './sample-api-layout';
+
 /**
  * Seat structure for the seat page.
  *
@@ -35,6 +37,8 @@ export interface SeatCell {
   col: number;
   rowSpan: number;
   booked: boolean;
+  /** Set on seats booked by a lady (F) or a gent (M), when the backend says so. */
+  gender?: 'F' | 'M';
 }
 export interface Deck {
   key: DeckKey;
@@ -81,10 +85,68 @@ export function buildDecks(config: SeatConfig): Deck[] {
   return decks.sort((a, b) => (a.key === 'lower' ? -1 : 1) - (b.key === 'lower' ? -1 : 1));
 }
 
+// ---------- Real backend response ----------
+// The backend sends each deck as a grid of cells. Its rows run ACROSS the bus and its columns run ALONG the bus
+// (column 0 = front), so we turn it a quarter turn: front at the top, backend row 0 = driver side (right).
+// seat_class_id: 1 = seat, 2 = sleeper, anything else = aisle / empty. seatText is the seat number.
+// A seat is for sale when it has a fare (bus_seats.PDetails / ticket_price); every other seat is not available.
+// Gender "F" / "M" marks a seat booked by a lady / a gent.
+export interface ApiCell {
+  id: number;
+  seat_class_id: number;
+  seatText: string;
+  rowNumber: number;
+  colNumber: number;
+  Gender?: string;
+  bus_seats?: { PDetails?: unknown[]; ticket_price?: unknown };
+}
+export interface ApiSeatLayout {
+  bus?: { id: number; name?: string; max_seat_book?: number }[];
+  lower_berth?: ApiCell[];
+  lowerBerth_totalRows?: number;
+  lowerBerth_totalColumns?: number;
+  upper_berth?: ApiCell[];
+  upperBerth_totalRows?: number;
+  upperBerth_totalColumns?: number;
+}
+
+const isForSale = (c: ApiCell) => !!c.bus_seats && (!!c.bus_seats.PDetails?.length || !!c.bus_seats.ticket_price);
+
+function deckFromApi(key: DeckKey, cells: ApiCell[] | undefined, rows: number | undefined, cols: number | undefined): Deck | null {
+  if (!cells?.length) return null;
+  if (!rows || !cols) throw new Error(`Deck "${key}" has no row / column count`);
+  const used = cells.filter((c) => (c.seat_class_id === 1 || c.seat_class_id === 2) && c.seatText);
+  // A column along the bus is one seat long, or two when it holds sleepers.
+  const height = Array.from({ length: cols }, (_, c) => (used.some((u) => u.colNumber === c && u.seat_class_id === 2) ? 2 : 1));
+  const start = height.map((_, c) => 1 + height.slice(0, c).reduce((a, b) => a + b, 0));
+  const out: SeatCell[] = [];
+  const seen = new Set<string>();
+  for (const u of used) {
+    if (u.rowNumber >= rows || u.colNumber >= cols) throw new Error(`Deck "${key}": seat ${u.seatText} is outside the ${rows}x${cols} grid`);
+    if (seen.has(u.seatText)) throw new Error(`Deck "${key}": seat ${u.seatText} appears twice`);
+    seen.add(u.seatText);
+    const sleeper = u.seat_class_id === 2;
+    out.push({ id: u.seatText, kind: sleeper ? 'sleeper' : 'seat', row: start[u.colNumber], col: rows - u.rowNumber, rowSpan: sleeper ? 2 : 1, booked: !isForSale(u), gender: u.Gender === 'F' || u.Gender === 'M' ? u.Gender : undefined });
+  }
+  if (!out.length) return null;
+  return { key, title: key === 'lower' ? 'Lower deck' : 'Upper deck', hasDriver: key === 'lower', cols: rows, cells: out };
+}
+
+/** Turns the backend response into decks. */
+export function decksFromApi(res: ApiSeatLayout): Deck[] {
+  const decks = [
+    deckFromApi('lower', res.lower_berth, res.lowerBerth_totalRows, res.lowerBerth_totalColumns),
+    deckFromApi('upper', res.upper_berth, res.upperBerth_totalRows, res.upperBerth_totalColumns),
+  ].filter((d): d is Deck => !!d);
+  if (!decks.length) throw new Error('Seat layout has no seats');
+  return decks;
+}
+
 /** Never throws: a broken layout becomes an error message, not a broken page. */
 export function loadDecks(busId: number): { decks: Deck[]; error: string | null } {
   try {
-    return { decks: buildDecks(seatConfigFor(busId)), error: null };
+    const api = busId === 1 ? SAMPLE_API_LAYOUT : null; // later: the live API response for the chosen bus
+    return { decks: api ? decksFromApi(api) : buildDecks(seatConfigFor(busId)), error: null };
   } catch (e) {
     console.error('Seat layout error for bus', busId, e);
     return { decks: [], error: 'The seat layout for this bus is not available right now.' };
@@ -158,12 +220,7 @@ const SAMPLE_CONFIGS: Record<number, SeatConfig> = {
       { key: 'lower', map: ['B . S S', '| . S S', 'B . S S', '| . S S', 'S . S S', 'S . S S', 'S S S S'], booked: ['L2', 'L6', 'L9', 'L12', 'L16', 'LB2'] },
     ],
   },
-  // 2/1, single deck, all sleepers
-  5: {
-    decks: [
-      { key: 'lower', map: ['B B . B', '| | . |', 'B B . B', '| | . |', 'B B . B', '| | . |', 'B B . B', '| | . |'], booked: ['LB2', 'LB5', 'LB9'] },
-    ],
-  },
+  // Bus 5 uses the real backend sample (sample-api-layout.ts), see loadDecks().
 };
 
 export function seatConfigFor(busId: number): SeatConfig {
