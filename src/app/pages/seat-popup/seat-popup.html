@@ -1,0 +1,18 @@
+<div class="backdrop" (click)="closed.emit()"></div>
+<div class="sheet" role="dialog" aria-modal="true" [attr.aria-label]="'Select seats, ' + from() + ' to ' + to()">
+  <header class="sheet-top">
+    <div class="in">
+      <button #closeBtn class="x" type="button" aria-label="Close seat selection" (click)="closed.emit()">
+        <app-icon name="x" [size]="22" />
+      </button>
+      <div class="route">
+        <b>{{ from() }}</b><app-icon name="arrow-right" [size]="14" /><b>{{ to() }}</b>
+      </div>
+      <span class="bus small muted">{{ s.bus().operator }} · {{ s.bus().depart }}</span>
+    </div>
+  </header>
+
+  <div class="sheet-body">
+    <app-select-seat [embedded]="true" />
+  </div>
+</div>

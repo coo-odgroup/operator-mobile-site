@@ -1,18 +1,20 @@
-<div class="page seats">
-  <app-stepper [current]="0" />
+<div class="page seats" [class.embedded]="embedded()" [class.step-seats]="step() === 'seats'" [class.step-points]="step() === 'points'">
+  @if (!embedded()) { <app-stepper [current]="0" /> }
 
   <section class="card stack seat-info">
     <div class="row between">
       <span class="strong">{{ s.bus().operator }}</span>
       <span class="small muted">Select up to {{ max }} seats · {{ s.seats().length }} selected</span>
     </div>
-    <div class="legend">
-      <span><i style="border:1.5px solid var(--brand)"></i>Available</span>
-      <span><i style="background:var(--brand)"></i>Selected</span>
-      <span><i style="background:var(--line)"></i>Not available</span>
-      <span><i class="gents-dot"></i>Gents</span>
-      <span><i class="ladies-dot"></i>Ladies</span>
-    </div>
+    @if (!embedded()) {
+      <div class="legend">
+        <span><i style="border:1.5px solid var(--brand)"></i>Available</span>
+        <span><i style="background:var(--brand)"></i>Selected</span>
+        <span><i style="background:var(--line)"></i>Not available</span>
+        <span><i class="gents-dot"></i>Gents</span>
+        <span><i class="ladies-dot"></i>Ladies</span>
+      </div>
+    }
   </section>
 
   <section class="card seat-deck">
@@ -51,14 +53,73 @@
           </div>
         }
       </div>
+      @if (embedded()) {
+        <div class="legend legend--below">
+          <span><i style="border:1.5px solid var(--brand)"></i>Available</span>
+          <span><i style="background:var(--brand)"></i>Selected</span>
+          <span><i style="background:var(--line)"></i>Not available</span>
+          <span><i class="gents-dot"></i>Gents</span>
+          <span><i class="ladies-dot"></i>Ladies</span>
+        </div>
+      }
     }
   </section>
+
+  @if (embedded()) {
+    <!-- Boarding / dropping point picker (pop-up only) -->
+    <section class="card seat-pts">
+      <!-- Mobile only: second screen of the flow, with a back button -->
+      <div class="m-head">
+        <button type="button" class="m-back" aria-label="Back to seats" (click)="goSeats()"><app-icon name="chevron-left" [size]="22" /></button>
+        <div class="m-head-t">
+          <b>Boarding &amp; dropping point</b>
+          <span>Seats {{ s.seats().join(', ') }} · {{ s.subtotal() | currency: 'USD' }}</span>
+        </div>
+        <button type="button" class="m-change" (click)="goSeats()">Change</button>
+      </div>
+      <div class="pts-tabs" role="tablist">
+        <button type="button" role="tab" class="pts-tab" [class.on]="ptsTab() === 'board'" [attr.aria-selected]="ptsTab() === 'board'" (click)="setTab('board')">Boarding Points</button>
+        <button type="button" role="tab" class="pts-tab" [class.on]="ptsTab() === 'drop'" [attr.aria-selected]="ptsTab() === 'drop'" (click)="setTab('drop')">Dropping Points</button>
+      </div>
+      <label class="pts-search">
+        <input type="search" [value]="ptsQuery()" (input)="ptsQuery.set($any($event.target).value)"
+          [placeholder]="ptsTab() === 'board' ? 'Search Boarding Point' : 'Search Dropping Point'" aria-label="Search points" />
+        <app-icon name="search" [size]="18" />
+      </label>
+      <div class="pts-list" role="radiogroup" [attr.aria-label]="ptsTab() === 'board' ? 'Boarding point' : 'Dropping point'">
+        @for (p of ptsList(); track p.i) {
+          <button type="button" class="pts-row" role="radio" [attr.aria-checked]="p.i === ptsSelected()" (click)="choosePoint(p.i)">
+            <span class="radio" [class.on]="p.i === ptsSelected()"></span>
+            <span class="pts-txt"><b>{{ p.name }}</b><span>{{ p.detail }}</span></span>
+            <span class="pts-time">{{ p.time }}</span>
+          </button>
+        } @empty {
+          <p class="pts-empty small muted">No points match your search.</p>
+        }
+      </div>
+    </section>
+  }
 
   <section class="card stack seat-sum">
     <div class="kv"><span>Selected</span><span>{{ s.seats().length ? s.seats().join(', ') : 'None yet' }}</span></div>
     <div class="kv"><span>Subtotal</span><span>{{ s.subtotal() | currency: 'USD' }}</span></div>
-    <button class="btn btn-primary btn-block" [disabled]="!s.seats().length" (click)="next()">
+    <button class="btn btn-primary btn-block" [disabled]="!s.seats().length" (click)="embedded() ? pointsContinue() : next()">
       Continue <app-icon name="arrow-right" [size]="18" />
     </button>
   </section>
 </div>
+
+@if (embedded()) {
+  <!-- Mobile only: sticky bar, like redBus -->
+  @if (step() === 'points' || s.seats().length) {
+    <div class="m-bar">
+      <div class="m-bar-t">
+        <span class="m-bar-seats">{{ s.seats().length }} {{ s.seats().length === 1 ? 'seat' : 'seats' }} · {{ s.seats().join(', ') }}</span>
+        <b>{{ s.subtotal() | currency: 'USD' }}</b>
+      </div>
+      <button class="btn btn-primary" type="button" (click)="mobileContinue()">
+        Continue <app-icon name="arrow-right" [size]="18" />
+      </button>
+    </div>
+  }
+}

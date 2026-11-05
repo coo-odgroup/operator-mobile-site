@@ -1,8 +1,13 @@
-import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, WritableSignal, computed, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { CurrencyPipe, DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, WritableSignal, computed, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs';
 import { Bus, Store, fmtDate, short } from '../../core/store';
+import { releaseStaleScrollLock } from '../../shared/scroll-lock/scroll-lock';
 import { Icon } from '../../shared/icon/icon';
+import { BusDrawer } from '../bus-drawer/bus-drawer';
+import { SeatPopup } from '../seat-popup/seat-popup';
 
 type Sort = 'cheapest' | 'fastest' | 'earliest';
 type BusType = 'ac' | 'seater' | 'sleeper';
@@ -31,13 +36,15 @@ const toMinutes = (t: string) => {
 @Component({
   selector: 'app-bus-listing',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Icon, CurrencyPipe],
+  imports: [Icon, CurrencyPipe, SeatPopup, BusDrawer],
   styleUrl: './bus-listing.scss',
   templateUrl: './bus-listing.html',
 })
 export class BusListing {
   protected readonly s = inject(Store);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly doc = inject(DOCUMENT);
   protected readonly short = short;
   protected readonly fmt = fmtDate;
   protected readonly sort = signal<Sort>('earliest');
@@ -145,8 +152,55 @@ export class BusListing {
     this.priceHi.set(null);
   }
 
+  // ---------- Seat pop-up ----------
+  // The pop-up is driven by the address (?seat=<bus id>): the browser Back button closes it,
+  // a reload keeps it open, and the list underneath keeps its filters and scroll position.
+  private readonly seatParam = toSignal(this.route.queryParamMap.pipe(map((p) => p.get('seat'))), { initialValue: null });
+  protected readonly seatBusId = computed(() => {
+    const id = Number(this.seatParam());
+    return this.seatParam() !== null && this.s.buses().some((b) => b.id === id) ? id : null;
+  });
+
+  private readonly detailsParam = toSignal(this.route.queryParamMap.pipe(map((p) => p.get('details'))), { initialValue: null });
+  protected readonly detailsBusId = computed(() => {
+    const id = Number(this.detailsParam());
+    return this.detailsParam() !== null && this.s.buses().some((b) => b.id === id) ? id : null;
+  });
+
+  constructor() {
+    // Opened from a link or reload: make that bus the selected one.
+    effect(() => {
+      const id = this.seatBusId() ?? this.detailsBusId();
+      if (id !== null && this.s.bus().id !== id) this.s.selectBus(id);
+    });
+
+    // No overlay is open: make sure the page can scroll (clears any lock left behind).
+    effect(() => {
+      if (this.seatBusId() === null && this.detailsBusId() === null) setTimeout(() => releaseStaleScrollLock(this.doc.body));
+    });
+  }
+
+  // ---------- Bus details drawer ----------
+  protected openDetails(id: number) {
+    this.s.selectBus(id);
+    this.router.navigate([], { relativeTo: this.route, queryParams: { details: id }, queryParamsHandling: 'merge' });
+  }
+
+  protected closeDetails() {
+    this.router.navigate([], { relativeTo: this.route, queryParams: { details: null }, queryParamsHandling: 'merge' });
+  }
+
+  /** "Select seats" inside the drawer: swap the drawer for the seat pop-up. */
+  protected pickFromDetails(id: number) {
+    this.router.navigate([], { relativeTo: this.route, queryParams: { details: null, seat: id }, queryParamsHandling: 'merge', replaceUrl: true });
+  }
+
   protected pick(id: number) {
     this.s.selectBus(id);
-    this.router.navigateByUrl('/bus-details');
+    this.router.navigate([], { relativeTo: this.route, queryParams: { seat: id }, queryParamsHandling: 'merge' });
+  }
+
+  protected closeSeats() {
+    this.router.navigate([], { relativeTo: this.route, queryParams: { seat: null }, queryParamsHandling: 'merge' });
   }
 }

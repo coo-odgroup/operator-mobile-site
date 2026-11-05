@@ -1,0 +1,120 @@
+<div class="page info">
+  <div class="split" data-sec="overview">
+  <section class="title row">
+    <div class="grow">
+      <h2>{{ b().operator }}</h2>
+      <p class="small muted">{{ b().type }}</p>
+    </div>
+    <span class="rating"><app-icon name="star" [size]="13" [fill]="true" />{{ b().rating }}</span>
+  </section>
+
+  <section class="card route">
+    <div class="tl">
+      <div><i></i><div class="strong">{{ from() }} Central Station</div><div class="tiny muted">{{ dateShort() }}, {{ b().depart }}</div></div>
+      <span class="duration"><span class="tiny muted">Duration</span><br /><b>{{ b().duration }}</b></span>
+      <div><i class="end"></i><div class="strong">{{ to() }} South Station</div><div class="tiny muted">{{ dateShort() }}, {{ b().arrive }}</div></div>
+    </div>
+  </section>
+  </div>
+
+  <h2 class="section-title" data-sec="amenities">Amenities</h2>
+  <section class="card amenities">
+    @for (a of s.allAmenities; track a.key) {
+      <div class="amenity" [class.off]="!has(a.key)">
+        <app-icon [name]="a.icon" />
+        <span>{{ a.key }}</span>
+      </div>
+    }
+  </section>
+
+  <h2 class="section-title" data-sec="photos">Bus Photos</h2>
+  <div class="photos" role="list">
+    @for (p of photos; track p.label; let i = $index) {
+      <button type="button" class="photo" role="listitem" [style.background]="p.bg"
+        [attr.aria-label]="'View photo ' + (i + 1) + ' of ' + photos.length + ': ' + p.label" (click)="openPhoto(i, $event)">
+        @if (src(p); as u) { <img [src]="u" [alt]="p.label" loading="lazy" (error)="markBroken(u)" /> } @else { <app-icon name="image" [size]="26" /> }
+        <span class="photo-cap">{{ p.label }}</span>
+      </button>
+    }
+  </div>
+
+  <div class="split">
+    <div>
+  <h2 class="section-title" data-sec="pickup">Pickup Points</h2>
+  <section class="card list" role="radiogroup" aria-label="Pickup point">
+    @for (p of s.pickupPoints(); track p.name; let i = $index) {
+      <button class="list-row" role="radio" [attr.aria-checked]="s.pickupIdx() === i" (click)="s.pickupIdx.set(i)">
+        <span class="radio" [class.on]="s.pickupIdx() === i"></span>
+        <span class="grow"><div class="list-row__t t">{{ p.name }}</div><div class="s">{{ p.detail }}</div></span>
+        <span class="small muted">{{ p.time }}</span>
+      </button>
+    }
+  </section>
+
+    </div>
+    <div>
+  <h2 class="section-title" data-sec="drop">Drop-off Points</h2>
+  <section class="card list" role="radiogroup" aria-label="Drop-off point">
+    @for (p of s.dropPoints(); track p.name; let i = $index) {
+      <button class="list-row" role="radio" [attr.aria-checked]="s.dropIdx() === i" (click)="s.dropIdx.set(i)">
+        <span class="radio" [class.on]="s.dropIdx() === i"></span>
+        <span class="grow"><div class="t">{{ p.name }}</div><div class="s">{{ p.detail }}</div></span>
+        <span class="small muted">{{ p.time }}</span>
+      </button>
+    }
+  </section>
+
+    </div>
+  </div>
+
+  <div class="split">
+    <div>
+  <h2 class="section-title" data-sec="policy">Cancellation Policy</h2>
+  <section class="card policy">
+    @for (c of s.cancellation; track c.text) {
+      <p [class]="'dot-' + c.tone"><i></i>{{ c.text }}</p>
+    }
+  </section>
+
+    </div>
+    <div>
+  <h2 class="section-title" data-sec="reviews">Reviews</h2>
+  @for (r of s.reviews; track r.name) {
+    <article class="card stack review">
+      <div class="row">
+        <span class="av">{{ initial(r.name) }}</span>
+        <div class="grow"><div class="strong">{{ r.name }}</div><div class="tiny muted">{{ r.date }}</div></div>
+        <span class="small strong score"><app-icon name="star" [size]="13" [fill]="true" />{{ r.rating.toFixed(1) }}</span>
+      </div>
+      <p class="small muted">{{ r.text }}</p>
+    </article>
+  }
+    </div>
+  </div>
+</div>
+
+@if (viewing() !== null) {
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Bus photos" (click)="closePhoto()"
+    (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+    <button type="button" class="lb-close" aria-label="Close photo" (click)="closePhoto(); $event.stopPropagation()">
+      <app-icon name="x" [size]="24" />
+    </button>
+    <span class="lb-count">{{ viewing()! + 1 }} / {{ photos.length }}</span>
+
+    <button type="button" class="lb-nav prev" aria-label="Previous photo" (click)="step(-1); $event.stopPropagation()">
+      <app-icon name="chevron-left" [size]="26" />
+    </button>
+
+    <figure class="lb-fig" (click)="$event.stopPropagation()">
+      <div class="lb-img" [class.has-img]="src(photos[viewing()!])" [style.background]="src(photos[viewing()!]) ? null : photos[viewing()!].bg">
+        @if (src(photos[viewing()!]); as u) { <img [src]="u" [alt]="photos[viewing()!].label" (error)="markBroken(u)" /> }
+        @else { <app-icon name="image" [size]="64" /> }
+      </div>
+      <figcaption>{{ photos[viewing()!].label }}</figcaption>
+    </figure>
+
+    <button type="button" class="lb-nav next" aria-label="Next photo" (click)="step(1); $event.stopPropagation()">
+      <app-icon name="chevron-right" [size]="26" />
+    </button>
+  </div>
+}

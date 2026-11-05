@@ -143,10 +143,23 @@
             <span class="tiny" [style.color]="b.seatsLeft <= 8 ? 'var(--danger)' : 'var(--muted)'">{{ b.seatsLeft }}
               seats left</span>
           </span>
-          <button class="btn btn-primary btn-sm" (click)="pick(b.id)">Select</button>
+          <span class="acts">
+            <button class="btn btn-soft btn-sm" type="button" (click)="openDetails(b.id)">Bus details</button>
+            <button class="btn btn-primary btn-sm" type="button" (click)="pick(b.id)">View Seats</button>
+          </span>
         </div>
       </article>
       }
     </div>
   </div>
 </div>
+
+<!-- Seat selection opens over this list (the address gets ?seat=<bus id>, so Back closes it). -->
+@if (seatBusId() !== null) {
+  <app-seat-popup (closed)="closeSeats()" />
+}
+
+<!-- Bus details slide in from the right (address gets ?details=<bus id>, so Back closes it). -->
+@if (detailsBusId() !== null) {
+  <app-bus-drawer (closed)="closeDetails()" (pick)="pickFromDetails($event)" />
+}

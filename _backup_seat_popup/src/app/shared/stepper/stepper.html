@@ -1,0 +1,8 @@
+<ol class="stepper" aria-label="Booking progress">
+  @for (s of steps; track s; let i = $index) {
+    <li [class.done]="done() || i < current()" [class.active]="!done() && i === current()" [attr.aria-current]="!done() && i === current() ? 'step' : null">
+      <span class="dot"></span>
+      <span class="label">{{ s }}</span>
+    </li>
+  }
+</ol>

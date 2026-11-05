@@ -1,0 +1,64 @@
+<div class="page seats">
+  <app-stepper [current]="0" />
+
+  <section class="card stack seat-info">
+    <div class="row between">
+      <span class="strong">{{ s.bus().operator }}</span>
+      <span class="small muted">Select up to {{ max }} seats · {{ s.seats().length }} selected</span>
+    </div>
+    <div class="legend">
+      <span><i style="border:1.5px solid var(--brand)"></i>Available</span>
+      <span><i style="background:var(--brand)"></i>Selected</span>
+      <span><i style="background:var(--line)"></i>Not available</span>
+      <span><i class="gents-dot"></i>Gents</span>
+      <span><i class="ladies-dot"></i>Ladies</span>
+    </div>
+  </section>
+
+  <section class="card seat-deck">
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    } @else {
+      <!-- Mobile: Lower | Upper tabs (hidden on desktop, where both decks are visible) -->
+      @if (decks().length > 1) {
+        <div class="deck-tabs" role="tablist" aria-label="Deck">
+          @for (d of decks(); track d.key) {
+            <button class="deck-tab" type="button" role="tab" [class.on]="active() === d.key"
+              [attr.aria-selected]="active() === d.key" (click)="active.set(d.key)">{{ d.title }}</button>
+          }
+        </div>
+      }
+
+      <div class="decks">
+        @for (d of decks(); track d.key) {
+          <div class="deck-col" [class.show]="decks().length === 1 || active() === d.key">
+            <div class="deck">
+              <div class="driver">
+                <span class="deck-title">{{ d.title }}</span>
+                @if (d.hasDriver) { <app-icon name="wheel" [size]="24" /> }
+              </div>
+              <div class="grid" [style.grid-template-columns]="'repeat(' + d.cols + ', var(--cw))'">
+                @for (c of d.cells; track c.id) {
+                  <label class="seat" [class.sleeper]="c.kind === 'sleeper'" [class.booked]="c.booked" [class.ladies]="c.booked && c.gender === 'F'" [class.gents]="c.booked && c.gender === 'M'" [class.sel]="isSel(c)"
+                    [style.grid-row]="c.row + ' / span ' + c.rowSpan" [style.grid-column]="c.col">
+                    <input type="checkbox" [checked]="isSel(c)" [disabled]="c.booked" (change)="onToggle(c, $event)"
+                      [attr.aria-label]="(c.kind === 'sleeper' ? 'Sleeper ' : 'Seat ') + c.id + (c.booked ? (c.gender === 'F' ? ', booked by a lady' : c.gender === 'M' ? ', booked by a gent' : ', not available') : '')" />
+                    <span>{{ c.id }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="card stack seat-sum">
+    <div class="kv"><span>Selected</span><span>{{ s.seats().length ? s.seats().join(', ') : 'None yet' }}</span></div>
+    <div class="kv"><span>Subtotal</span><span>{{ s.subtotal() | currency: 'USD' }}</span></div>
+    <button class="btn btn-primary btn-block" [disabled]="!s.seats().length" (click)="next()">
+      Continue <app-icon name="arrow-right" [size]="18" />
+    </button>
+  </section>
+</div>

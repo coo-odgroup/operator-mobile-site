@@ -1,0 +1,128 @@
+:host {
+  display: contents;
+}
+
+// Dimmed, blurred layer over the whole window (site header, side menu and tab bar included).
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fade-in 0.2s ease-out;
+}
+
+// The sheet rises from the bottom like a modal and leaves the blurred page visible above it.
+.sheet {
+  position: fixed;
+  inset: 70px 0 0 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.25);
+  animation: sheet-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sheet-top {
+  flex: none;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+
+  .in {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 1180px;
+    height: 56px;
+    margin: 0 auto;
+    padding: 0 14px;
+  }
+}
+
+.x {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--text, inherit);
+
+  &:hover {
+    background: var(--brand-soft);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 15px;
+
+  b {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  app-icon {
+    color: var(--muted);
+  }
+}
+
+.bus {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet,
+  .backdrop {
+    animation: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .sheet {
+    top: 40px;
+  }
+
+  .bus {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sheet-top .in {
+    padding: 0 36px;
+  }
+}

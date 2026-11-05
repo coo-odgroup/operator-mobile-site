@@ -1,0 +1,28 @@
+<div class="backdrop" (click)="closed.emit()"></div>
+<aside class="panel" role="dialog" aria-modal="true" [attr.aria-label]="'Bus details, ' + s.bus().operator">
+  <header class="head">
+    <h2>Bus details</h2>
+    <button #closeBtn class="x" type="button" aria-label="Close bus details" (click)="closed.emit()">
+      <app-icon name="x" [size]="22" />
+    </button>
+  </header>
+
+  <nav #tabBar class="tabs" role="tablist" aria-label="Bus details sections">
+    @for (t of tabs; track t.key) {
+      <button type="button" role="tab" class="tab" [class.on]="active() === t.key" [attr.aria-selected]="active() === t.key"
+        [attr.data-tab]="t.key" (click)="go(t.key)">{{ t.label }}</button>
+    }
+  </nav>
+
+  <div #body class="body" (scroll)="onScroll()">
+    <app-bus-info />
+  </div>
+
+  <footer class="foot">
+    <div>
+      <span class="amount">{{ s.bus().price | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+      <span class="tiny muted"> / seat</span>
+    </div>
+    <button class="btn btn-primary" type="button" (click)="pick.emit(s.bus().id)">Select seats</button>
+  </footer>
+</aside>
