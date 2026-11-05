@@ -1,9 +1,10 @@
 .seats {
-  --cw: 44px;
-  --rh: 40px;
+  --cw: 34px;
+  --rh: 30px;
+  --gap: 6px;
 }
 
-// seat width and row height; a sleeper spans two rows
+// seat width, row height and gap; a sleeper spans two rows
 .legend {
   display: flex;
   flex-wrap: wrap;
@@ -71,7 +72,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  gap: 28px;
+  gap: 20px;
 }
 
 .deck-col {
@@ -86,20 +87,20 @@
 
 .deck {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   width: max-content;
-  padding: 14px 18px;
+  padding: 10px 12px;
   border: 2px solid var(--line);
-  border-radius: 22px 22px 12px 12px;
+  border-radius: 18px 18px 10px 10px;
 }
 
 .driver {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 30px;
+  min-height: 24px;
   color: var(--muted);
-  padding-bottom: 6px;
+  padding-bottom: 4px;
   border-bottom: 1px dashed var(--line);
 }
 
@@ -113,7 +114,7 @@
 .grid {
   display: grid;
   grid-auto-rows: var(--rh);
-  gap: 8px;
+  gap: var(--gap);
 }
 
 // Each seat is a <label> around a real checkbox. The checkbox is invisible but covers the seat,
@@ -126,8 +127,8 @@
   cursor: pointer;
   width: 100%;
   height: 100%;
-  border-radius: 8px;
-  font-size: 11.5px;
+  border-radius: 6px;
+  font-size: 10.5px;
   font-weight: 600;
   border: 1.5px solid var(--brand);
   color: var(--brand);
@@ -136,15 +137,15 @@
 
 // Round headrest / pillow shape at the foot of every seat (sleepers get a wider one below).
 .seat {
-  padding-bottom: 6px;
+  padding-bottom: 4px;
 
   &::after {
     content: '';
     position: absolute;
     left: 50%;
-    bottom: 5px;
-    width: 18px;
-    height: 5px;
+    bottom: 3px;
+    width: 12px;
+    height: 3px;
     transform: translateX(-50%);
     border-radius: 999px;
     background: currentColor;
@@ -194,22 +195,23 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 12px;
+  padding-top: 7px;
   padding-bottom: 0;
-  border-radius: 6px;
+  border-radius: 5px;
 
   &::after {
-    bottom: 8px;
-    width: 55%;
-    height: 8px;
+    bottom: 6px;
+    width: 50%;
+    height: 5px;
     opacity: 0.3;
   }
 }
 
 @media (min-width: 1024px) {
   .seats {
-    --cw: 48px;
-    --rh: 46px;
+    // Seats shrink with the window height so a whole bus (about 12 rows) fits on screen, and stop growing at 34px.
+    --rh: clamp(24px, calc((100vh - 290px) / 12 - var(--gap)), 34px);
+    --cw: calc(var(--rh) * 1.2);
     display: grid;
     grid-template-columns: minmax(0, 1fr) 380px;
     grid-template-rows: auto auto 1fr;
