@@ -41,6 +41,18 @@ export interface SearchState {
 }
 export interface RecentSearch { from: string; to: string; date: string; passengers: number; }
 export interface RouteInfo { from: string; to: string; price: number; duration: string; }
+export interface Offer {
+  title: string;
+  code: string;
+  /** One or two lines shown in the coupon pop-up. */
+  desc: string;
+}
+export interface BusOffer {
+  title: string;
+  code: string;
+  /** One or two lines shown in the coupon pop-up. */
+  desc: string;
+}
 export interface Bus {
   id: number;
   operator: string;
@@ -53,6 +65,8 @@ export interface Bus {
   rating: number;
   seatsLeft: number;
   amenities: string[];
+  /** Optional promo shown as a tag on top of the listing card. */
+  offer?: BusOffer;
 }
 export interface Booking {
   id: string;
@@ -183,11 +197,11 @@ export class Store {
     const { price, duration } = routeInfo(from, to);
     const minutes = parseMinutes(duration);
     const templates = [
-      { operator: 'BusGo Express', type: 'Premium AC - 2+2 Recliner', at: 6 * 60 + 30, add: 10, rating: 4.8, left: 12, am: ['Wi-Fi', 'Charging', 'Snacks', 'TV', 'AC', 'Restroom', 'Luggage', 'USB'] },
+      { operator: 'BusGo Express', type: 'Premium AC - 2+2 Recliner', at: 6 * 60 + 30, add: 10, rating: 4.8, left: 12, offer: { title: 'Upto $5 off', code: 'SAVE5', desc: 'Get up to $5 off on this bus. Applies to a single booking.' }, am: ['Wi-Fi', 'Charging', 'Snacks', 'TV', 'AC', 'Restroom', 'Luggage', 'USB'] },
       { operator: 'Metro Liner', type: 'Standard AC', at: 9 * 60 + 15, add: 0, rating: 4.5, left: 20, am: ['AC', 'Charging'] },
-      { operator: 'Skyline Coach', type: 'Premium AC', at: 12 * 60 + 45, add: 8, rating: 4.7, left: 7, am: ['Wi-Fi', 'Charging', 'Restroom'] },
+      { operator: 'Skyline Coach', type: 'Premium AC', at: 12 * 60 + 45, add: 8, rating: 4.7, left: 7, offer: { title: 'Flat 10% off', code: 'FIRST10', desc: 'Flat 10% off on your first booking with ODBUS.' }, am: ['Wi-Fi', 'Charging', 'Restroom'] },
       { operator: 'Coastal Cruiser', type: 'Standard', at: 16 * 60, add: -5, rating: 4.2, left: 25, am: ['AC'] },
-      { operator: 'Night Rider', type: 'Sleeper AC', at: 22 * 60 + 30, add: 4, rating: 4.6, left: 5, am: ['Blanket', 'Charging', 'Wi-Fi'] },
+      { operator: 'Night Rider', type: 'Sleeper AC', at: 22 * 60 + 30, add: 4, rating: 4.6, left: 5, offer: { title: 'Upto $4 off', code: 'NIGHT4', desc: 'Travel at night and save up to $4 per booking.' }, am: ['Blanket', 'Charging', 'Wi-Fi'] },
     ];
     return templates.map((t, i) => ({
       id: i + 1,
@@ -201,6 +215,7 @@ export class Store {
       rating: t.rating,
       seatsLeft: t.left,
       amenities: t.am,
+      offer: t.offer,
     }));
   });
   /** Buses for the current search; empty when the route has no service on the chosen date. */

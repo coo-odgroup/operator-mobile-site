@@ -1,4 +1,7 @@
 <div class="page page--cols">
+  <!-- Change route, date or passengers without going back -->
+  <app-modify-search class="full" />
+
   <section class="card stack full">
     <div class="row between">
       <div>
@@ -120,6 +123,9 @@
 
       @for (b of list(); track b.id) {
       <article class="card stack">
+        @if (b.offer) {
+        <button class="offer-tag" type="button" (click)="couponOffer.set(b.offer)">{{ b.offer.title }}. Code: {{ b.offer.code }}</button>
+        }
         <div class="row between">
           <div>
             <div class="strong">{{ b.operator }}</div>
@@ -162,4 +168,8 @@
 <!-- Bus details slide in from the right (address gets ?details=<bus id>, so Back closes it). -->
 @if (detailsBusId() !== null) {
   <app-bus-drawer (closed)="closeDetails()" (pick)="pickFromDetails($event)" />
+}
+
+@if (couponOffer(); as o) {
+  <app-coupon-modal [offer]="o" (closed)="couponOffer.set(null)" />
 }

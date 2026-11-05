@@ -1,0 +1,41 @@
+<section class="card ms" [class.open]="open()" aria-label="Modify search">
+  <!-- Summary + Modify button; the fields open below it -->
+  <div class="ms-sum">
+    <div class="ms-sum-t">
+      <b>{{ curFrom() }} → {{ curTo() }}</b>
+      <span>{{ fmt(s.search().date) }}</span>
+    </div>
+    <button type="button" class="btn btn-soft btn-sm" [attr.aria-expanded]="open()" (click)="toggle()">
+      <app-icon [name]="open() ? 'x' : 'search'" [size]="15" />{{ open() ? 'Close' : 'Modify' }}
+    </button>
+  </div>
+
+  <form class="ms-form" (submit)="submit($event)" novalidate>
+    <label class="field f-from">
+      <span class="lbl"><app-icon name="pin" [size]="14" />From</span>
+      <select class="control" (change)="from.set($any($event.target).value); error.set('')">
+        <option value="" [selected]="!from()">Select departure city</option>
+        @for (c of s.cities; track c) { <option [value]="c" [selected]="c === from()">{{ c }}</option> }
+      </select>
+    </label>
+
+    <button type="button" class="ms-swap" aria-label="Swap cities" (click)="swap()"><app-icon name="swap" [size]="18" /></button>
+
+    <label class="field f-to">
+      <span class="lbl"><app-icon name="pin" [size]="14" />To</span>
+      <select class="control" (change)="to.set($any($event.target).value); error.set('')">
+        <option value="" [selected]="!to()">Select destination city</option>
+        @for (c of s.cities; track c) { <option [value]="c" [selected]="c === to()">{{ c }}</option> }
+      </select>
+    </label>
+
+    <label class="field f-date">
+      <span class="lbl"><app-icon name="calendar" [size]="14" />Date of Journey</span>
+      <input class="control" type="date" [min]="today" [value]="date()" (change)="date.set($any($event.target).value); error.set('')" />
+    </label>
+
+    <button class="btn btn-primary ms-go" type="submit"><app-icon name="search" [size]="18" />Search</button>
+
+    @if (error()) { <p class="error ms-err" role="alert">{{ error() }}</p> }
+  </form>
+</section>

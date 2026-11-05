@@ -1,0 +1,30 @@
+<div class="backdrop" (click)="closed.emit()"></div>
+<div class="sheet" role="dialog" aria-modal="true" aria-label="Offer details">
+  <div class="head">
+    <h2>Offer details</h2>
+    <button class="x" type="button" (click)="closed.emit()" aria-label="Close">×</button>
+  </div>
+  <div class="body">
+    <div class="title">{{ offer().title }}</div>
+    <p class="desc">{{ offer().desc }}</p>
+
+    <div class="code-box">
+      <div>
+        <span class="lbl">Coupon code</span>
+        <b class="code">{{ offer().code }}</b>
+      </div>
+      <button class="copy" type="button" [class.done]="copied()" (click)="copy()">
+        {{ copied() ? 'Copied ✓' : 'Copy code' }}
+      </button>
+    </div>
+    <span class="sr" aria-live="polite">{{ copied() ? 'Code copied' : '' }}</span>
+
+    <h3>How to use</h3>
+    <ul>
+      <li>Copy the code and select your seats.</li>
+      <li>Paste it in the coupon box on the payment step.</li>
+      <li>The discount shows in your fare summary.</li>
+    </ul>
+    <p class="note">Offer is valid for a limited time and cannot be combined with other coupons.</p>
+  </div>
+</div>

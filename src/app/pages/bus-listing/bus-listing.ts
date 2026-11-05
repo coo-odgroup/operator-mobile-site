@@ -3,10 +3,12 @@ import { ChangeDetectionStrategy, Component, WritableSignal, computed, effect, i
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
-import { Bus, Store, fmtDate, short } from '../../core/store';
+import { Bus, BusOffer, Store, fmtDate, short } from '../../core/store';
 import { releaseStaleScrollLock } from '../../shared/scroll-lock/scroll-lock';
 import { Icon } from '../../shared/icon/icon';
+import { CouponModal } from '../../shared/coupon-modal/coupon-modal';
 import { BusDrawer } from '../bus-drawer/bus-drawer';
+import { ModifySearch } from '../../shared/modify-search/modify-search';
 import { SeatPopup } from '../seat-popup/seat-popup';
 
 type Sort = 'cheapest' | 'fastest' | 'earliest';
@@ -36,7 +38,7 @@ const toMinutes = (t: string) => {
 @Component({
   selector: 'app-bus-listing',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Icon, CurrencyPipe, SeatPopup, BusDrawer],
+  imports: [CouponModal, Icon, CurrencyPipe, SeatPopup, BusDrawer, ModifySearch],
   styleUrl: './bus-listing.scss',
   templateUrl: './bus-listing.html',
 })
@@ -199,6 +201,8 @@ export class BusListing {
     this.s.selectBus(id);
     this.router.navigate([], { relativeTo: this.route, queryParams: { seat: id }, queryParamsHandling: 'merge' });
   }
+
+  protected readonly couponOffer = signal<BusOffer | null>(null);
 
   protected closeSeats() {
     this.router.navigate([], { relativeTo: this.route, queryParams: { seat: null }, queryParamsHandling: 'merge' });

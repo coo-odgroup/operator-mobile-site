@@ -325,3 +325,21 @@
     }
 }
 .acts { display: inline-flex; gap: 8px; }
+
+// Promo tag hugging the card's top-left corner
+.offer-tag {
+  justify-self: start;
+  margin: -14px 0 -2px -14px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #c2570c;
+  background: #fff1e3;
+  border-radius: var(--radius) 0 10px 0;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  &:hover { background: #ffe6cc; }
+  &:focus-visible { outline: 2px solid #c2570c; outline-offset: -2px; }
+}
+@media (min-width: 1024px) { .offer-tag { margin: -18px 0 -2px -18px; } }

@@ -1,0 +1,60 @@
+.ms { padding: 0; overflow: hidden; }
+
+// ---- Mobile: summary row, form opens below it ----
+.ms-sum {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+}
+.ms-sum-t {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  b { font-size: 15px; }
+  span { font-size: 12px; color: var(--muted); }
+}
+
+.ms-form {
+  display: none;
+  gap: 12px;
+  padding: 4px 14px 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.ms.open .ms-form { display: grid; }
+
+.ms-swap {
+  display: grid;
+  place-items: center;
+  justify-self: end;
+  width: 40px;
+  height: 40px;
+  margin: -6px 0;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+  &:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+}
+.ms-go { width: 100%; height: 44px; }
+.ms-err { margin: 0; }
+
+// ---- Desktop: the fields sit in one row when opened ----
+@media (min-width: 1024px) {
+  .ms-sum { padding: 16px 20px; }
+  .ms-sum-t { display: flex; align-items: baseline; gap: 14px; b { font-size: 16px; } span { font-size: 13px; } }
+
+  .ms-form {
+    grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr) minmax(0, 0.8fr) auto;
+    align-items: end;
+    gap: 6px 14px;
+    padding: 16px 20px 18px;
+  }
+  .f-from { grid-column: 1; grid-row: 1; }
+  .ms-swap { grid-column: 2; grid-row: 1; justify-self: center; margin: 0; width: 44px; height: 44px; }
+  .f-to { grid-column: 3; grid-row: 1; }
+  .f-date { grid-column: 4; grid-row: 1; }
+  .ms-go { grid-column: 5; grid-row: 1; width: auto; min-width: 140px; }
+  .ms-err { grid-column: 1 / -1; grid-row: 2; }
+}
