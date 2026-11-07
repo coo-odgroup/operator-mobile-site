@@ -31,7 +31,10 @@
   justify-self: end;
   width: 40px;
   height: 40px;
-  margin: -6px 0;
+  // Floats at the right edge, between the From and To fields (takes no row height of its own)
+  margin: -11px 0 -29px;
+  position: relative;
+  z-index: 2;
   border-radius: 50%;
   background: var(--brand-soft);
   color: var(--brand);
