@@ -4,6 +4,10 @@
   --brand-2: #2a55e1;
   --brand-dark: #2a519e;
   --brand-soft: #e7f6ff;
+  --brand-deep: #0b2a55; // footer / very dark shade
+  --hero-a: #0a2676; // hero overlay (darkest)
+  --hero-b: #0d3c96; // hero overlay (mid)
+  // ^ these 7 brand tokens are set at startup from the operator config (core/operator-config.ts); values here are the ODBUS fallback.
   --bg: #f3f6f8;
   --outer: #dcd9e8;
   --surface: #ffffff;

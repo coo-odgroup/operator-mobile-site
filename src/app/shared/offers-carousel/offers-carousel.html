@@ -1,0 +1,33 @@
+<section class="oc">
+  <div class="oc-head">
+    <h2>{{ title() }}</h2>
+    <div class="oc-nav">
+      <button type="button" aria-label="Previous offers" (click)="scroll(-1)"><app-icon name="chevron-left" [size]="18" /></button>
+      <button type="button" aria-label="Next offers" (click)="scroll(1)"><app-icon name="chevron-right" [size]="18" /></button>
+    </div>
+  </div>
+
+  <div class="oc-track" #track>
+    @for (o of offers(); track o.code; let i = $index) {
+      <article [class]="'oc-card tone-' + (i % 4)" tabindex="0" role="button"
+               [attr.aria-label]="o.title + ', code ' + o.code + '. View details'"
+               (click)="active.set(o)" (keydown.enter)="active.set(o)">
+        <div class="oc-top">
+          <span class="oc-badge">{{ o.badge }}</span>
+          <app-icon [name]="o.icon" [size]="22" />
+        </div>
+        <h3>{{ o.title }}</h3>
+        <p class="oc-desc">{{ o.desc }}</p>
+        <div class="oc-code">
+          <b>{{ o.code }}</b>
+          <button type="button" (click)="copy(o.code, $event)">Copy</button>
+        </div>
+        <span class="oc-note">{{ o.note }}</span>
+      </article>
+    }
+  </div>
+</section>
+
+@if (active(); as o) {
+  <app-coupon-modal [offer]="{ title: o.badge + ' · ' + o.title, code: o.code, desc: o.desc }" (closed)="active.set(null)" />
+}

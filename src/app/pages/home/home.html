@@ -1,89 +1,225 @@
 <section class="d-hero">
-  <div class="d-hero-in">
-    <h1>Odisha's No. 1 Online Bus Ticket Booking Platform</h1>
-    <p class="d-sub">Book in seconds. Assured seats, instant e-tickets and fast refunds.</p>
-    <app-search-form mode="simple" />
+  <div class="d-band">
+    <div class="d-art">
+      @if (!artFailed()) {
+        <img [src]="op.hero().image" alt="" width="1708" height="920" loading="lazy" decoding="async" (error)="artFailed.set(true)" />
+      } @else {
+        <app-hero-art />
+      }
+    </div>
+    <div class="d-in">
+      <span class="d-badge"><app-icon name="star" [size]="14" />{{ op.hero().badge }}</span>
+      <h1>{{ op.hero().title }} <em>{{ op.hero().highlight }}</em></h1>
+      <ul class="d-points">
+        @for (p of op.hero().points; track p) {
+          <li><app-icon name="check-circle" [size]="16" />{{ p }}</li>
+        }
+      </ul>
+      @if (s.offers[0]; as o) {
+        <button type="button" class="d-offer" (click)="couponOpen.set(true)">
+          <app-icon name="ticket" [size]="16" />Use <b>{{ o.code }}</b> · {{ o.badge }}
+        </button>
+      }
+    </div>
+  </div>
+  <div class="d-form"><app-search-form mode="simple" /></div>
+</section>
+
+@if (s.recent().length) {
+  <section class="rs-sec">
+    <div class="rt-head">
+      <h2>Recent searches</h2>
+      <span class="rs-hint">Pick up where you left off</span>
+    </div>
+    <div class="rs-grid">
+      @for (r of s.recent().slice(0, 3); track r.from + r.to + r.date) {
+        <button type="button" class="rs-card" (click)="again(r)" [appTip]="r.from + ' → ' + r.to" [attr.aria-label]="'Search again: ' + r.from + ' to ' + r.to">
+          <span class="rs-ic"><app-icon name="bus" [size]="20" /></span>
+          <span class="rs-body">
+            <span class="rs-route">{{ short(r.from) }} <i>→</i> {{ short(r.to) }}</span>
+            <span class="rs-meta">
+              <span><app-icon name="calendar" [size]="13" />{{ fmt(r.date) }}</span>
+            </span>
+          </span>
+          <span class="rs-go"><app-icon name="search" [size]="16" /></span>
+        </button>
+      }
+    </div>
+  </section>
+}
+
+<section class="offers-sec">
+  <app-offers-carousel [offers]="s.offers" />
+</section>
+
+<section class="routes-sec">
+  <div class="rt-head">
+    <h2>Popular destinations</h2>
+    <div class="rt-nav">
+      <button type="button" aria-label="Previous routes" (click)="scrollRoutes(-1)"><app-icon name="chevron-left" [size]="18" /></button>
+      <button type="button" aria-label="Next routes" (click)="scrollRoutes(1)"><app-icon name="chevron-right" [size]="18" /></button>
+    </div>
+  </div>
+  <div class="rt-track" #rtTrack>
+    @for (r of s.popularRoutes; track r.from + r.to; let i = $index) {
+      <button type="button" [class]="'rt-card tone-' + (i % 5)" (click)="pickRoute(r)" [attr.aria-label]="'Explore ' + r.from + ' to ' + r.to">
+        <span class="rt-img">
+          @if (r.img) { <img [src]="r.img" alt="" loading="lazy" decoding="async" /> }
+        </span>
+        <span class="rt-body">
+          <span class="rt-text">
+            <span class="rt-route">{{ r.to }}</span>
+            <span class="rt-sub">Explore destination</span>
+          </span>
+          <span class="rt-go"><app-icon name="arrow-right" [size]="16" /></span>
+        </span>
+      </button>
+    }
   </div>
 </section>
 
-<!-- Desktop-only: ODBUS Advantage -->
-<section class="d-only d-wrap">
-  <h2 class="d-h">ODBUS Advantage</h2>
-  <div class="adv">
-    @for (a of advantages; track a.t) {
-      <article class="card adv-card">
-        <span class="tile"><app-icon [name]="a.icon" [size]="22" /></span>
-        <h3>{{ a.t }}</h3>
-        <p class="small muted">{{ a.s }}</p>
-        <a routerLink="/support" class="more">Know More →</a>
+<section class="trust" #trustEl>
+  <div class="trust-head">
+    <h2>Why travellers trust {{ s.brand }}</h2>
+    <p>Real numbers from real journeys</p>
+  </div>
+  <div class="trust-in">
+    @for (t of op.stats(); track t.label; let i = $index) {
+      <div class="trust-item">
+        <span class="trust-ic" [class.pre]="armed() && !started()" [class.pop]="started() && armed()" [style.--i]="i"><app-icon [name]="t.icon" [size]="22" /></span>
+        <span>
+          <b class="cnt"><span class="sr">{{ t.value }}</span><i class="cnt-g" aria-hidden="true">{{ t.value }}</i><span class="cnt-n" aria-hidden="true">{{ shown(t.value) }}</span></b>
+          <small>{{ t.label }}</small>
+        </span>
+      </div>
+    }
+  </div>
+</section>
+
+<section class="pr-sec">
+  <div class="rt-head">
+    <h2>Popular Routes</h2>
+    <div class="pr-actions">
+      <a routerLink="/search" class="pr-all">View all<app-icon name="chevron-right" [size]="16" /></a>
+      <div class="rt-nav">
+        <button type="button" aria-label="Previous routes" (click)="slide(prTrack, -1)"><app-icon name="chevron-left" [size]="18" /></button>
+        <button type="button" aria-label="Next routes" (click)="slide(prTrack, 1)"><app-icon name="chevron-right" [size]="18" /></button>
+      </div>
+    </div>
+  </div>
+  <div class="pr-track" #prTrack>
+    @for (r of s.topRoutes; track r.from + r.to) {
+      <button type="button" class="pr-card" (click)="pickRoute(r)" [attr.aria-label]="r.from + ' to ' + r.to + ', from ' + (r.cur ?? '$') + r.price">
+        <span class="pr-top">
+          <span class="pr-ic"><app-icon name="bus" [size]="18" /></span>
+          <span class="pr-dur"><app-icon name="clock" [size]="12" />{{ r.duration }}</span>
+        </span>
+        <span class="pr-path">
+          <span class="pr-stop">{{ r.from }}</span>
+          <span class="pr-stop">{{ r.to }}</span>
+        </span>
+        <span class="pr-foot">
+          <span class="pr-price"><small>From</small> {{ r.cur ?? '$' }}{{ r.price }}</span>
+          <span class="rt-go"><app-icon name="arrow-right" [size]="16" /></span>
+        </span>
+      </button>
+    }
+  </div>
+</section>
+
+<!-- About -->
+<section class="about-sec">
+  <div class="rt-head"><h2>About {{ s.brand }}</h2></div>
+  <div class="about">
+    <img class="about-img" [src]="s.about.image" [alt]="'About ' + s.brand" loading="lazy" />
+    <div class="about-body">
+      <h2>{{ s.about.title }}</h2>
+      <p>{{ s.brand }} {{ s.about.text }}</p>
+      <div class="about-stats">
+        @for (st of s.about.stats; track st.label) {
+          <div><b>{{ st.value }}</b><span>{{ st.label }}</span></div>
+        }
+      </div>
+      <a class="about-btn" [routerLink]="s.about.cta.link">{{ s.about.cta.label }}<app-icon name="arrow-right" [size]="16" /></a>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section class="rv-sec">
+  <div class="rt-head">
+    <div class="rv-title">
+      <h2>What our travellers say</h2>
+      <p>Honest reviews from people who travelled with {{ s.brand }}</p>
+    </div>
+    <div class="pr-actions">
+      <a [href]="s.travellerReviews.allUrl" target="_blank" rel="noopener" class="pr-all">View all<app-icon name="chevron-right" [size]="16" /></a>
+      <div class="rt-nav">
+        <button type="button" aria-label="Previous reviews" (click)="slide(rvTrack, -1)"><app-icon name="chevron-left" [size]="18" /></button>
+        <button type="button" aria-label="Next reviews" (click)="slide(rvTrack, 1)"><app-icon name="chevron-right" [size]="18" /></button>
+      </div>
+    </div>
+  </div>
+  <div class="rv-track" #rvTrack>
+    <article class="rv-card rv-sum">
+      <b class="rv-score">{{ s.travellerReviews.rating }}</b>
+      <span class="rv-stars" aria-hidden="true">★★★★★</span>
+      <span class="rv-count">Based on {{ s.travellerReviews.count }} reviews</span>
+    </article>
+    @for (r of s.travellerReviews.items; track r.name) {
+      <article class="rv-card">
+        <header class="rv-who">
+          <span class="rv-av">{{ r.name.charAt(0) }}</span>
+          <span><b>{{ r.name }}</b><small>{{ r.trip }}</small></span>
+        </header>
+        <span class="rv-stars" [attr.aria-label]="r.stars + ' out of 5 stars'"><i aria-hidden="true">{{ '★'.repeat(r.stars) }}</i><i class="off" aria-hidden="true">{{ '★'.repeat(5 - r.stars) }}</i></span>
+        <p>{{ r.text }}</p>
+        <span class="rv-foot"><app-icon name="check-circle" [size]="14" />Verified traveller</span>
       </article>
     }
   </div>
 </section>
 
-<div class="page page--cols">
-
-  <h2 class="section-title">Popular Routes</h2>
-  <div class="grid-2 grid-4">
-    @for (r of s.popularRoutes; track r.from + r.to) {
-      <button class="card route" (click)="pickRoute(r)">
-        <div class="stops">
-          <span class="stop"><i></i>{{ short(r.from) }}</span>
-          <span class="stop"><i class="end"></i>{{ short(r.to) }}</span>
-        </div>
-        <div class="row between small">
-          <span class="price">${{ r.price }}</span><span class="muted">{{ r.duration }}</span>
-        </div>
-      </button>
-    }
-  </div>
-
-  <h2 class="section-title">Recent Searches</h2>
-  @for (r of s.recent(); track r.from + r.to + r.date) {
-    <button class="card recent" (click)="again(r)">
-      <span class="grow">
-        <span class="r">{{ short(r.from) }} → {{ short(r.to) }}</span><br />
-        <span class="tiny muted">{{ fmt(r.date) }}</span>
-      </span>
-      <span class="icon-btn"><app-icon name="search" [size]="16" /></span>
-    </button>
-  } @empty {
-    <p class="small muted">Your recent searches will show up here.</p>
-  }
-
-  <h2 class="section-title">Special Offers</h2>
-  @for (o of s.offers; track o.code) {
-    <app-offer-card [offer]="o" />
-  }
-</div>
-
-<!-- Desktop-only: app download + FAQ -->
-<section class="d-only d-wrap">
-  <div class="app-dl">
-    <div>
-      <h2>Book faster with the ODBUS app</h2>
-      <ul>
-        <li><app-icon name="check-circle" [size]="18" />Exclusive app-only offers</li>
-        <li><app-icon name="check-circle" [size]="18" />Live tickets and trip updates</li>
-        <li><app-icon name="check-circle" [size]="18" />Track and manage bookings in one tap</li>
+<!-- Amenities -->
+<section class="am-sec">
+  <div class="rt-head"><h2>Bus amenities</h2></div>
+  <div class="am">
+    <img class="am-img" [src]="s.comfort.image" alt="Comfortable bus interior" loading="lazy" />
+    <div class="am-body">
+      <h3>{{ s.comfort.title }}</h3>
+      <p>{{ s.comfort.text }}</p>
+      <ul class="am-grid">
+        @for (a of s.comfort.items; track a.label) {
+          <li><span class="am-ic"><app-icon [name]="a.icon" [size]="18" /></span>{{ a.label }}</li>
+        }
       </ul>
-      <button class="btn store" type="button" (click)="s.showToast('App store link goes here')">Get it on Google Play</button>
+      <a class="about-btn" [routerLink]="s.comfort.cta.link">{{ s.comfort.cta.label }}<app-icon name="arrow-right" [size]="16" /></a>
     </div>
-    <svg class="qr" viewBox="0 0 21 21" shape-rendering="crispEdges" aria-hidden="true">
-      @for (c of qr; track $index) { <rect [attr.x]="c.x" [attr.y]="c.y" width="1" height="1" fill="#0d2a52" /> }
-    </svg>
   </div>
+</section>
 
-  <h2 class="d-h">Frequently Asked Questions</h2>
-  <div class="card list faq-box">
-    @for (f of faqs; track f.q) {
-      <div>
-        <button class="list-row" (click)="open.set(open() === f.q ? '' : f.q)" [attr.aria-expanded]="open() === f.q">
-          <span class="grow t">{{ f.q }}</span>
-          <app-icon class="chev" [name]="open() === f.q ? 'chevron-up' : 'chevron-down'" [size]="18" />
+<!-- FAQ -->
+<section class="fq-sec">
+  <div class="rt-head">
+    <div class="rv-title">
+      <h2>Frequently asked questions</h2>
+      <p>Quick answers about booking, payments and cancellations</p>
+    </div>
+  </div>
+  <div class="fq-grid">
+    @for (f of s.faqs; track f.q; let i = $index) {
+      <div class="fq" [class.open]="open() === f.q">
+        <button type="button" class="fq-q" (click)="open.set(open() === f.q ? '' : f.q)" [attr.aria-expanded]="open() === f.q" [attr.aria-controls]="'fq-a-' + i">
+          <span>{{ f.q }}</span>
+          <span class="fq-ic"><app-icon [name]="open() === f.q ? 'chevron-up' : 'chevron-down'" [size]="16" /></span>
         </button>
-        @if (open() === f.q) { <p class="small muted ans">{{ f.a }}</p> }
+        <div class="fq-a" [id]="'fq-a-' + i" role="region"><div><p>{{ f.a }}</p></div></div>
       </div>
     }
   </div>
+  <p class="fq-help">Still have questions? <a routerLink="/support">Contact support<app-icon name="chevron-right" [size]="14" /></a></p>
 </section>
+
+@if (couponOpen() && s.offers[0]; as o) {
+  <app-coupon-modal [offer]="{ title: o.title, code: o.code, desc: o.desc }" (closed)="couponOpen.set(false)" />
+}

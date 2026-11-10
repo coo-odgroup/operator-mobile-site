@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
+import { OperatorConfigService } from '../../core/operator-config';
 import { Store } from '../../core/store';
 import { Icon } from '../../shared/icon/icon';
 
@@ -19,6 +20,7 @@ export class Shell {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
   protected readonly s = inject(Store);
+  protected readonly op = inject(OperatorConfigService);
   protected readonly drawer = signal(false);
 
   protected readonly siteNav = [

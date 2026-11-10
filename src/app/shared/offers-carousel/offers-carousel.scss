@@ -1,0 +1,49 @@
+:host { display: block; }
+.oc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+h2 { font-size: 18px; margin: 0; }
+.oc-nav { display: none; gap: 8px; }
+.oc-nav button {
+  width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
+  color: var(--brand); display: grid; place-items: center; cursor: pointer;
+  &:hover { background: var(--brand-soft); }
+}
+
+.oc-track {
+  display: flex; gap: 12px; overflow-x: auto; padding: 2px 2px 8px; margin: 0 -2px;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+.oc-card {
+  --tone: #c2570c; --tint: #fff4e8; --line-c: #f0b783;
+  flex: 0 0 236px; scroll-snap-align: start; cursor: pointer;
+  display: grid; gap: 6px; align-content: start; padding: 14px;
+  background: var(--tint); border: 1.5px dashed var(--line-c); border-radius: 14px; color: var(--text);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(30, 26, 45, 0.1); }
+  &:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  &.tone-1 { --tone: #0c5aa8; --tint: #eaf4ff; --line-c: #8bbdf0; }
+  &.tone-2 { --tone: #0b7a55; --tint: #e8f8f1; --line-c: #7fd0ae; }
+  &.tone-3 { --tone: #6b3fb5; --tint: #f3edff; --line-c: #bba2ec; }
+}
+.oc-top { display: flex; align-items: center; justify-content: space-between; color: var(--tone); }
+.oc-badge { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+h3 { margin: 0; font-size: 14px; color: var(--tone); }
+.oc-desc { margin: 0; font-size: 12.5px; color: var(--muted); min-height: 38px; }
+.oc-code {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px;
+  padding: 6px 6px 6px 12px; background: rgba(255, 255, 255, 0.75); border: 1px solid var(--line-c); border-radius: 10px;
+  b { font-size: 13px; letter-spacing: 0.06em; color: var(--tone); }
+  button {
+    border: 0; cursor: pointer; font: inherit; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 8px;
+    background: var(--tone); color: #fff;
+  }
+}
+.oc-note { font-size: 11px; color: var(--muted); }
+
+@media (min-width: 1024px) {
+  h2 { font-size: 24px; }
+  .oc-head { margin-bottom: 14px; }
+  .oc-nav { display: flex; }
+  .oc-track { gap: 16px; }
+  .oc-card { flex-basis: 262px; padding: 16px; }
+}

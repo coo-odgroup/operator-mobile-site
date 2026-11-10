@@ -1,10 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { OperatorConfigService } from './operator-config';
 
-/** Change the brand name here (header, sidebar, settings). */
-export const BRAND = 'ODBUS';
 
-export const CITIES = ['New York', 'Boston', 'Philadelphia', 'Washington DC', 'Baltimore', 'Pittsburgh'];
+export const CITIES = ['New York', 'Boston', 'Philadelphia', 'Washington DC', 'Baltimore', 'Pittsburgh', 'Bhubaneswar', 'Cuttack', 'Puri', 'Sambalpur', 'Gopalpur', 'Berhampur', 'Rourkela'];
 const SHORT: Record<string, string> = { 'New York': 'NYC', Philadelphia: 'Philly', 'Washington DC': 'DC' };
 export const short = (city: string) => SHORT[city] ?? city;
 
@@ -40,12 +39,14 @@ export interface SearchState {
   passengers: number;
 }
 export interface RecentSearch { from: string; to: string; date: string; passengers: number; }
-export interface RouteInfo { from: string; to: string; price: number; duration: string; }
-export interface Offer {
-  title: string;
-  code: string;
-  /** One or two lines shown in the coupon pop-up. */
-  desc: string;
+export interface RouteInfo {
+  from: string; to: string; price: number; duration: string;
+  /** Groups routes into tabs on Home (e.g. 'Top routes', 'Weekend trips'). */
+  tag?: string;
+  /** Optional photo URL, e.g. '/photos/routes/boston.jpg'. Without one, a coloured card is shown. */
+  img?: string;
+  /** Currency symbol; defaults to '$'. */
+  cur?: string;
 }
 export interface BusOffer {
   title: string;
@@ -106,6 +107,11 @@ const PROMOS: Record<string, Promo> = {
   WEEKEND20: { code: 'WEEKEND20', type: 'pct', value: 20, label: 'Weekend Special' },
   FIRST10: { code: 'FIRST10', type: 'flat', value: 10, label: 'First Trip Discount' },
   REFER15: { code: 'REFER15', type: 'flat', value: 15, label: 'Referral reward' },
+  STUDENT15: { code: 'STUDENT15', type: 'pct', value: 15, label: 'Student Special' },
+  EARLY12: { code: 'EARLY12', type: 'pct', value: 12, label: 'Early Bird' },
+  GROUP8: { code: 'GROUP8', type: 'pct', value: 8, label: 'Group Booking' },
+  FESTIVE25: { code: 'FESTIVE25', type: 'pct', value: 25, label: 'Festive Special' },
+  UPI5: { code: 'UPI5', type: 'pct', value: 5, label: 'UPI Offer' },
 };
 
 // Sample route table - replace with the real pricing API.
@@ -114,6 +120,13 @@ const ROUTE_TABLE: Record<string, { price: number; duration: string }> = {
   'New York|Washington DC': { price: 40, duration: '4h 15m' },
   'New York|Philadelphia': { price: 25, duration: '2h 10m' },
   'Philadelphia|Washington DC': { price: 22, duration: '2h 20m' },
+  'Bhubaneswar|Puri': { price: 180, duration: '2h 00m' },
+  'Bhubaneswar|Cuttack': { price: 80, duration: '0h 45m' },
+  'Bhubaneswar|Sambalpur': { price: 450, duration: '5h 30m' },
+  'Bhubaneswar|Gopalpur': { price: 320, duration: '4h 15m' },
+  'Bhubaneswar|Berhampur': { price: 300, duration: '3h 30m' },
+  'Bhubaneswar|Rourkela': { price: 600, duration: '7h 00m' },
+  'Cuttack|Puri': { price: 220, duration: '2h 45m' },
 };
 const routeKey = (a: string, b: string) => [a, b].sort().join('|');
 const routeInfo = (a: string, b: string) => ROUTE_TABLE[routeKey(a, b)] ?? { price: 38, duration: '3h 40m' };
@@ -134,7 +147,61 @@ export const BOOKED_SEATS = ['1A', '2C', '3B', '3C', '5D', '6A', '6B', '8C', '9D
 @Injectable({ providedIn: 'root' })
 export class Store {
   private readonly document = inject(DOCUMENT);
-  readonly brand = BRAND;
+  private readonly operator = inject(OperatorConfigService);
+  /** Brand name comes from the operator config (core/operator-config.ts). */
+  get brand() { return this.operator.brand().name; }
+  /** FAQ on Home. Backend: GET /content/faqs -> [{ q, a }] (plain text). */
+  readonly faqs = [
+    { q: 'How do I book a bus ticket?', a: 'Choose From, To and the date, pick a bus and seats, verify your details and pay.' },
+    { q: 'Where can I find my ticket?', a: 'Open Manage Booking to see and print all your tickets.' },
+    { q: 'Which payment methods are accepted?', a: 'Cards, UPI and wallets, depending on what your gateway supports.' },
+    { q: 'How do cancellations and refunds work?', a: 'Cancel from Manage Booking; the refund depends on the cancellation policy of the trip.' },
+    { q: 'Can I change my travel date after booking?', a: 'Rescheduling depends on the operator. Open Manage Booking to see the options for your trip, or contact support.' },
+    { q: 'How do I use an offer code?', a: 'Enter the code on the payment step. The discount shows in your fare summary before you pay.' },
+  ];
+  /** "Bus amenities" section on Home. Backend: GET /content/amenities. `icon` must be an app-icon name. */
+  readonly comfort = {
+    title: 'Choose a bus that fits your journey.',
+    text: 'Compare bus types and onboard facilities before you book.',
+    image: '/photos/amenities-odbus.jpg',
+    items: [
+      { icon: 'asterisk', label: 'AC / Non-AC' },
+      { icon: 'moon', label: 'Sleeper' },
+      { icon: 'users', label: 'Seater' },
+      { icon: 'plug', label: 'Charging Point' },
+      { icon: 'wifi', label: 'Wi-Fi' },
+      { icon: 'droplet', label: 'Water Bottle' },
+      { icon: 'heart', label: 'Blanket' },
+      { icon: 'eye', label: 'Reading Light' },
+    ],
+    cta: { label: 'Explore buses', link: '/search' },
+  };
+  /** Reviews on Home. Backend: GET /reviews?limit=6 + summary. Demo data. `url` opens the original review. */
+  readonly travellerReviews = {
+    rating: 4.5,
+    count: '2,400+',
+    allUrl: 'https://www.google.com/maps',
+    items: [
+      { name: 'Satya Sahoo', trip: 'Bhubaneswar → Puri', stars: 5, text: 'Comfortable seats, on-time departure and a very smooth booking. Boarding details came instantly on my phone.' },
+      { name: 'Priya Mohanty', trip: 'Cuttack → Bhubaneswar', stars: 5, text: 'Clean bus, good legroom and the driver was careful. Got my refund quickly when I changed plans.' },
+      { name: 'Rajesh Patra', trip: 'Bhubaneswar → Sambalpur', stars: 4, text: 'Night journey was relaxed and the AC was just right. Support answered my call at midnight.' },
+      { name: 'Ananya Das', trip: 'Bhubaneswar → Gopalpur', stars: 5, text: 'Easy to pick seats and the live bus timing helped a lot. Will book here again for the next trip.' },
+      { name: 'Biswajit Nayak', trip: 'Puri → Bhubaneswar', stars: 5, text: 'Great value fares and a friendly crew. The ticket was ready in seconds after payment.' },
+      { name: 'Smruti Behera', trip: 'Bhubaneswar → Rourkela', stars: 4, text: 'Long route but the ride was steady and clean. Pickup point was easy to find.' },
+    ],
+  };
+  /** "About" section on Home. Backend: GET /content/about (all fields are plain text/URLs). */
+  readonly about = {
+    title: 'Connecting Odisha, one journey at a time.',
+    text: 'brings passengers and bus operators together through a convenient online booking experience. Discover routes, compare services, manage bookings and get travel assistance in one place.',
+    image: '/photos/about-odbus.jpg',
+    stats: [
+      { value: '100+', label: 'Operator partners' },
+      { value: '500+', label: 'Daily services' },
+      { value: '24×7', label: 'Travel support' },
+    ],
+    cta: { label: 'Know more about us', link: '/support' },
+  };
   readonly cities = CITIES;
   readonly points = 2450;
   readonly tiers = [
@@ -154,10 +221,32 @@ export class Store {
   readonly recent = signal<RecentSearch[]>([
     { from: 'New York', to: 'Boston', date: '2025-04-15', passengers: 1 },
     { from: 'Washington DC', to: 'Philadelphia', date: '2025-04-10', passengers: 2 },
+    { from: 'Bhubaneswar', to: 'Puri', date: '2025-04-05', passengers: 1 },
   ]);
   readonly popularRoutes: RouteInfo[] = [
-    { from: 'New York', to: 'Boston', price: 45, duration: '4h 30m' },
-    { from: 'Washington DC', to: 'New York', price: 40, duration: '4h 15m' },
+    { from: 'Bhubaneswar', to: 'Puri', price: 180, duration: '2h 00m', tag: 'Odisha', cur: '₹', img: '/photos/routes/puri.jpg' },
+    { from: 'Cuttack', to: 'Bhubaneswar', price: 80, duration: '0h 45m', tag: 'Odisha', cur: '₹', img: '/photos/routes/bhubaneswar.jpg' },
+    { from: 'Bhubaneswar', to: 'Sambalpur', price: 450, duration: '5h 30m', tag: 'Odisha', cur: '₹', img: '/photos/routes/sambalpur.jpg' },
+    { from: 'Bhubaneswar', to: 'Gopalpur', price: 320, duration: '4h 15m', tag: 'Odisha', cur: '₹', img: '/photos/routes/gopalpur.jpg' },
+    { from: 'New York', to: 'Boston', price: 45, duration: '4h 30m', tag: 'Top routes' },
+    { from: 'Washington DC', to: 'New York', price: 40, duration: '4h 15m', tag: 'Top routes' },
+    { from: 'Philadelphia', to: 'New York', price: 22, duration: '2h 10m', tag: 'Top routes' },
+    { from: 'Boston', to: 'Philadelphia', price: 52, duration: '6h 05m', tag: 'Top routes' },
+    { from: 'New York', to: 'Washington DC', price: 38, duration: '4h 20m', tag: 'Weekend trips' },
+    { from: 'Boston', to: 'New York', price: 44, duration: '4h 30m', tag: 'Weekend trips' },
+    { from: 'Philadelphia', to: 'Washington DC', price: 26, duration: '2h 45m', tag: 'Weekend trips' },
+    { from: 'Washington DC', to: 'Philadelphia', price: 27, duration: '2h 50m', tag: 'Weekend trips' },
+  ];
+  /** Home "Popular routes" slider (no photos). Replace with the real top-routes API. */
+  readonly topRoutes: RouteInfo[] = [
+    { from: 'Bhubaneswar', to: 'Puri', price: 180, duration: '2h 00m', cur: '₹' },
+    { from: 'Bhubaneswar', to: 'Cuttack', price: 80, duration: '0h 45m', cur: '₹' },
+    { from: 'Bhubaneswar', to: 'Berhampur', price: 300, duration: '3h 30m', cur: '₹' },
+    { from: 'Bhubaneswar', to: 'Sambalpur', price: 450, duration: '5h 30m', cur: '₹' },
+    { from: 'Bhubaneswar', to: 'Gopalpur', price: 320, duration: '4h 15m', cur: '₹' },
+    { from: 'Bhubaneswar', to: 'Rourkela', price: 600, duration: '7h 00m', cur: '₹' },
+    { from: 'Cuttack', to: 'Puri', price: 220, duration: '2h 45m', cur: '₹' },
+    { from: 'Puri', to: 'Bhubaneswar', price: 180, duration: '2h 00m', cur: '₹' },
   ];
   readonly destinations = [
     { city: 'New York', from: 25, tint: 'linear-gradient(135deg,#5b3df5,#2b7fff)' },
@@ -401,6 +490,13 @@ export class Store {
   readonly offers: Offer[] = [
     { code: 'WEEKEND20', title: 'Weekend Special', desc: '20% off on all weekend trips', badge: '20% OFF', note: 'Valid until Apr 30', icon: 'ticket' },
     { code: 'FIRST10', title: 'First Trip Discount', desc: '$10 off on your first booking', badge: '$10 OFF', note: 'New users only', icon: 'gift' },
+    { code: 'RETURN10', title: 'Return Trip Offer', desc: '10% off when you book a return journey', badge: '10% OFF', note: 'Applied on return trips', icon: 'ticket' },
+    { code: 'NIGHT5', title: 'Night Rider', desc: '$5 off on all night departures', badge: '$5 OFF', note: 'Night buses only', icon: 'moon' },
+    { code: 'STUDENT15', title: 'Student Special', desc: '15% off for students on every trip', badge: '15% OFF', note: 'Show a valid student ID', icon: 'star' },
+    { code: 'EARLY12', title: 'Early Bird', desc: '12% off when you book 7 days ahead', badge: '12% OFF', note: 'Advance bookings', icon: 'calendar' },
+    { code: 'GROUP8', title: 'Group Booking', desc: '8% off when you book 4 or more seats', badge: '8% OFF', note: 'Min 4 seats', icon: 'users' },
+    { code: 'FESTIVE25', title: 'Festive Special', desc: '25% off on festival weekend trips', badge: '25% OFF', note: 'Limited period', icon: 'zap' },
+    { code: 'UPI5', title: 'Pay by UPI', desc: '5% off when you pay with UPI', badge: '5% OFF', note: 'On UPI payments', icon: 'card' },
   ];
   readonly rewards = [
     { title: 'Free Onboard Refreshments', tier: 'Gold', need: 4000, icon: 'gift' },

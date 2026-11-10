@@ -34,7 +34,7 @@
     gap: 0 12px;
     padding: 18px 22px;
     border-radius: 16px;
-    box-shadow: 0 12px 40px rgba(13, 71, 161, 0.25);
+    box-shadow: 0 12px 40px color-mix(in srgb, var(--hero-b) 25%, transparent);
     align-items: end;
     > .card-title { display: none; }
     .control { height: 42px; font-size: 14px; }

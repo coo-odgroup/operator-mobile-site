@@ -1,0 +1,62 @@
+{
+  "brand": {
+    "name": "ODBUS",
+    "legalName": "OD Tours and Travels",
+    "tagline": "Odisha's No. 1 online bus ticket booking platform.",
+    "logoUrl": ""
+  },
+  "colors": {
+    "primary": "#2296e8",
+    "secondary": "#2a55e1",
+    "dark": "#2a519e",
+    "soft": "#e7f6ff",
+    "deep": "#0b2a55",
+    "heroA": "#0a2676",
+    "heroB": "#0d3c96",
+    "desktop": {
+      "primary": "#1976d2",
+      "secondary": "#42a5f5",
+      "dark": "#0d47a1",
+      "soft": "#e3f0fc",
+      "gradient": "linear-gradient(135deg,#1565c0,#1976d2 55%,#42a5f5)"
+    }
+  },
+  "hero": {
+    "image": "/photos/konarak_temple.png",
+    "badge": "Odisha's No. 1 Bus Booking Platform",
+    "title": "Book bus tickets across Odisha",
+    "highlight": "& beyond",
+    "points": [
+      "Best fares",
+      "Trusted operators",
+      "Instant booking"
+    ]
+  },
+  "stats": [
+    {
+      "icon": "pin",
+      "value": "2500+",
+      "label": "Routes"
+    },
+    {
+      "icon": "bus",
+      "value": "2200+",
+      "label": "Buses"
+    },
+    {
+      "icon": "users",
+      "value": "10 Lakh+",
+      "label": "Happy customers"
+    },
+    {
+      "icon": "help",
+      "value": "24/7",
+      "label": "Customer support"
+    },
+    {
+      "icon": "star",
+      "value": "4.5",
+      "label": "Google rating"
+    }
+  ]
+}
