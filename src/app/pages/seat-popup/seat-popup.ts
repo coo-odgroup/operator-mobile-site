@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener, afterNextRender, computed, inject, output, viewChild } from '@angular/core';
-import { Store } from '../../core/store';
+import { Store, fmtDate } from '../../core/store';
 import { lockScroll } from '../../shared/scroll-lock/scroll-lock';
 import { Icon } from '../../shared/icon/icon';
 import { SelectSeat } from '../select-seat/select-seat';
@@ -25,6 +25,7 @@ export class SeatPopup {
 
   protected readonly from = computed(() => this.s.search().from || 'New York');
   protected readonly to = computed(() => this.s.search().to || 'Boston');
+  protected readonly date = computed(() => fmtDate(this.s.search().date));
 
   constructor() {
     // The page behind must not scroll while the pop-up is open.

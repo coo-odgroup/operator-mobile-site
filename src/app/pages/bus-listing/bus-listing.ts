@@ -192,11 +192,6 @@ export class BusListing {
     this.router.navigate([], { relativeTo: this.route, queryParams: { details: null }, queryParamsHandling: 'merge' });
   }
 
-  /** "Select seats" inside the drawer: swap the drawer for the seat pop-up. */
-  protected pickFromDetails(id: number) {
-    this.router.navigate([], { relativeTo: this.route, queryParams: { details: null, seat: id }, queryParamsHandling: 'merge', replaceUrl: true });
-  }
-
   protected pick(id: number) {
     this.s.selectBus(id);
     this.router.navigate([], { relativeTo: this.route, queryParams: { seat: id }, queryParamsHandling: 'merge' });

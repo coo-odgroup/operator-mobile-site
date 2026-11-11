@@ -1,4 +1,4 @@
-import { CurrencyPipe, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener, afterNextRender, inject, output, signal, viewChild } from '@angular/core';
 import { Store } from '../../core/store';
 import { lockScroll } from '../../shared/scroll-lock/scroll-lock';
@@ -9,7 +9,7 @@ import { BusInfo } from '../bus-info/bus-info';
 @Component({
   selector: 'app-bus-drawer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Icon, BusInfo, CurrencyPipe],
+  imports: [Icon, BusInfo],
   styleUrl: './bus-drawer.scss',
   templateUrl: './bus-drawer.html',
 })
@@ -37,14 +37,15 @@ export class BusDrawer {
   private pinTimer: ReturnType<typeof setTimeout> | undefined;
 
   readonly closed = output<void>();
-  /** "Select seats" pressed inside the drawer. */
-  readonly pick = output<number>();
 
   constructor() {
     // The list behind must not scroll while the drawer is open.
     inject(DestroyRef).onDestroy(lockScroll(this.doc.body));
 
-    afterNextRender(() => this.closeBtn()?.nativeElement.focus({ preventScroll: true }));
+    afterNextRender(() => {
+      this.closeBtn()?.nativeElement.focus({ preventScroll: true });
+      this.updateArrows();
+    });
   }
 
   @HostListener('document:keydown.escape')
@@ -96,5 +97,62 @@ export class BusDrawer {
     const btn = bar?.querySelector<HTMLElement>(`[data-tab="${key}"]`);
     if (!bar || !btn) return;
     bar.scrollTo({ left: btn.offsetLeft - (bar.clientWidth - btn.offsetWidth) / 2, behavior: 'smooth' });
+  }
+
+  // ---------- Tab strip: manual scrolling (wheel, drag, arrows) ----------
+  protected readonly canLeft = signal(false);
+  protected readonly canRight = signal(false);
+  protected readonly dragging = signal(false);
+  private dragX = 0;
+  private dragLeft = 0;
+  private dragMoved = false;
+
+  /** Show an arrow only on the side that still has hidden tabs. */
+  protected updateArrows() {
+    const bar = this.tabsEl()?.nativeElement;
+    if (!bar) return;
+    this.canLeft.set(bar.scrollLeft > 4);
+    this.canRight.set(bar.scrollLeft + bar.clientWidth < bar.scrollWidth - 4);
+  }
+
+  @HostListener('window:resize')
+  protected onResize() { this.updateArrows(); }
+
+  protected nudge(dir: number) {
+    const bar = this.tabsEl()?.nativeElement;
+    bar?.scrollBy({ left: dir * bar.clientWidth * 0.6, behavior: 'smooth' });
+  }
+
+  /** Mouse wheel over the tabs scrolls them sideways (touch/trackpad already scroll natively). */
+  protected onTabsWheel(e: WheelEvent) {
+    const bar = this.tabsEl()?.nativeElement;
+    if (!bar || bar.scrollWidth <= bar.clientWidth || Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    bar.scrollLeft += e.deltaY;
+  }
+
+  /** Click-and-drag with a mouse (touch scrolls natively). */
+  protected dragStart(e: PointerEvent) {
+    const bar = this.tabsEl()?.nativeElement;
+    if (!bar || e.pointerType !== 'mouse' || e.button !== 0 || bar.scrollWidth <= bar.clientWidth) return;
+    this.dragX = e.clientX;
+    this.dragLeft = bar.scrollLeft;
+    this.dragMoved = false;
+    this.dragging.set(true);
+  }
+
+  protected dragMove(e: PointerEvent) {
+    const bar = this.tabsEl()?.nativeElement;
+    if (!bar || !this.dragging()) return;
+    const dx = e.clientX - this.dragX;
+    if (!this.dragMoved && Math.abs(dx) > 5) { this.dragMoved = true; bar.setPointerCapture(e.pointerId); }
+    if (this.dragMoved) bar.scrollLeft = this.dragLeft - dx;
+  }
+
+  protected dragEnd() { this.dragging.set(false); }
+
+  /** A drag must not count as a tab click. */
+  protected swallowClick(e: MouseEvent) {
+    if (this.dragMoved) { e.stopPropagation(); e.preventDefault(); this.dragMoved = false; }
   }
 }

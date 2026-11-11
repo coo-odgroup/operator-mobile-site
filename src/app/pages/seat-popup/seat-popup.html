@@ -5,8 +5,11 @@
       <button #closeBtn class="x" type="button" aria-label="Close seat selection" (click)="closed.emit()">
         <app-icon name="x" [size]="22" />
       </button>
-      <div class="route">
-        <b>{{ from() }}</b><app-icon name="arrow-right" [size]="14" /><b>{{ to() }}</b>
+      <div class="trip">
+        <div class="route">
+          <b>{{ from() }}</b><app-icon name="arrow-right" [size]="14" /><b>{{ to() }}</b>
+        </div>
+        <span class="date small muted">{{ date() }}</span>
       </div>
       <span class="bus small muted">{{ s.bus().operator }} · {{ s.bus().depart }}</span>
     </div>

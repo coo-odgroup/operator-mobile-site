@@ -7,22 +7,24 @@
     </button>
   </header>
 
-  <nav #tabBar class="tabs" role="tablist" aria-label="Bus details sections">
-    @for (t of tabs; track t.key) {
-      <button type="button" role="tab" class="tab" [class.on]="active() === t.key" [attr.aria-selected]="active() === t.key"
-        [attr.data-tab]="t.key" (click)="go(t.key)">{{ t.label }}</button>
-    }
-  </nav>
+  <div class="tabs-wrap">
+    <button type="button" class="tabs-arrow left" [class.show]="canLeft()" tabindex="-1" aria-hidden="true" (click)="nudge(-1)">
+      <app-icon name="chevron-left" [size]="16" />
+    </button>
+    <nav #tabBar class="tabs" [class.dragging]="dragging()" role="tablist" aria-label="Bus details sections"
+      (scroll)="updateArrows()" (wheel)="onTabsWheel($event)" (pointerdown)="dragStart($event)"
+      (pointermove)="dragMove($event)" (pointerup)="dragEnd()" (pointercancel)="dragEnd()" (click)="swallowClick($event)">
+      @for (t of tabs; track t.key) {
+        <button type="button" role="tab" class="tab" [class.on]="active() === t.key" [attr.aria-selected]="active() === t.key"
+          [attr.data-tab]="t.key" (click)="go(t.key)">{{ t.label }}</button>
+      }
+    </nav>
+    <button type="button" class="tabs-arrow right" [class.show]="canRight()" tabindex="-1" aria-hidden="true" (click)="nudge(1)">
+      <app-icon name="chevron-right" [size]="16" />
+    </button>
+  </div>
 
   <div #body class="body" (scroll)="onScroll()">
     <app-bus-info />
   </div>
-
-  <footer class="foot">
-    <div>
-      <span class="amount">{{ s.bus().price | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
-      <span class="tiny muted"> / seat</span>
-    </div>
-    <button class="btn btn-primary" type="button" (click)="pick.emit(s.bus().id)">Select seats</button>
-  </footer>
 </aside>

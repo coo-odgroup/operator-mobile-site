@@ -49,15 +49,18 @@
 }
 
 <section class="offers-sec">
-  <app-offers-carousel [offers]="s.offers" />
+  <app-offers-carousel [offers]="s.offers" viewAll="/offers" />
 </section>
 
 <section class="routes-sec">
   <div class="rt-head">
     <h2>Popular destinations</h2>
-    <div class="rt-nav">
-      <button type="button" aria-label="Previous routes" (click)="scrollRoutes(-1)"><app-icon name="chevron-left" [size]="18" /></button>
-      <button type="button" aria-label="Next routes" (click)="scrollRoutes(1)"><app-icon name="chevron-right" [size]="18" /></button>
+    <div class="pr-actions">
+      <a routerLink="/search" class="pr-all">View all<app-icon name="chevron-right" [size]="16" /></a>
+      <div class="rt-nav">
+        <button type="button" aria-label="Previous routes" (click)="scrollRoutes(-1)"><app-icon name="chevron-left" [size]="18" /></button>
+        <button type="button" aria-label="Next routes" (click)="scrollRoutes(1)"><app-icon name="chevron-right" [size]="18" /></button>
+      </div>
     </div>
   </div>
   <div class="rt-track" #rtTrack>

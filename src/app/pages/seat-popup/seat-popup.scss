@@ -62,6 +62,16 @@
   }
 }
 
+.trip {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.date {
+  line-height: 1.2;
+}
+
 .route {
   display: flex;
   align-items: center;

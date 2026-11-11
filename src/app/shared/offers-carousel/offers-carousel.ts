@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, input, signal, viewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Offer, Store } from '../../core/store';
 import { CouponModal } from '../coupon-modal/coupon-modal';
 import { Icon } from '../icon/icon';
@@ -7,13 +8,15 @@ import { Icon } from '../icon/icon';
 @Component({
   selector: 'app-offers-carousel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Icon, CouponModal],
+  imports: [Icon, CouponModal, RouterLink],
   styleUrl: './offers-carousel.scss',
   templateUrl: './offers-carousel.html',
 })
 export class OffersCarousel {
   readonly offers = input.required<Offer[]>();
   readonly title = input('Offers for you');
+  /** Optional "View all" link target (e.g. '/offers'); the link is hidden when not set. */
+  readonly viewAll = input<string | null>(null);
 
   protected readonly active = signal<Offer | null>(null);
   private readonly s = inject(Store);

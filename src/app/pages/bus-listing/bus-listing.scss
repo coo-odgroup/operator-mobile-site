@@ -56,6 +56,27 @@
     min-width: 0;
 }
 
+.res-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    p { margin: 0; }
+}
+
+.res-sorts {
+    display: flex;
+    gap: 8px;
+    flex: 1 0 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+}
+
+// Amenity chips in each bus card: desktop only (mobile keeps the cards short)
+.b-amen { display: none; }
+
 .results {
     display: flex;
     flex-direction: column;
@@ -342,4 +363,8 @@
   &:hover { background: #ffe6cc; }
   &:focus-visible { outline: 2px solid #c2570c; outline-offset: -2px; }
 }
-@media (min-width: 1024px) { .offer-tag { margin: -18px 0 -2px -18px; } }
+@media (min-width: 1024px) {
+    .offer-tag { margin: -18px 0 -2px -18px; }
+    .b-amen { display: flex; }
+    .res-sorts { flex: 0 0 auto; }
+}

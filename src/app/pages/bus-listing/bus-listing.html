@@ -2,25 +2,6 @@
   <!-- Change route, date or passengers without going back -->
   <app-modify-search class="full" />
 
-  <section class="card stack full">
-    <div class="row between">
-      <div>
-        <div class="strong" style="font-size:16px">{{ short(from()) }} → {{ short(to()) }}</div>
-        <div class="small muted">{{ fmt(s.search().date) }} · {{ s.search().passengers }}
-          {{ s.search().passengers === 1 ? 'Passenger' : 'Passengers' }}</div>
-      </div>
-      <button class="icon-btn" (click)="s.toggleSaved(from(), to())" [attr.aria-pressed]="saved()"
-        aria-label="Save route">
-        <app-icon name="heart" [fill]="saved()" />
-      </button>
-    </div>
-    <div class="scroll">
-      @for (o of sorts; track o.key) {
-      <button class="chip" [class.on]="sort() === o.key" (click)="sort.set(o.key)">{{ o.label }}</button>
-      }
-    </div>
-  </section>
-
   <div class="listing full">
     <!-- Left: one filter card -->
     <aside class="card filters" [class.open]="filtersOpen()" aria-label="Filters">
@@ -112,7 +93,14 @@
 
     <!-- Right: results (listing cards unchanged) -->
     <div class="results">
-      <p class="small muted">{{ list().length }} buses found</p>
+      <div class="res-head">
+        <p class="small muted">{{ list().length }} buses found</p>
+        <div class="res-sorts" role="group" aria-label="Sort buses">
+          @for (o of sorts; track o.key) {
+          <button class="chip" [class.on]="sort() === o.key" [attr.aria-pressed]="sort() === o.key" (click)="sort.set(o.key)">{{ o.label }}</button>
+          }
+        </div>
+      </div>
 
       @if (!list().length && s.buses().length) {
       <div class="empty">
@@ -139,7 +127,7 @@
           <span style="text-align:right"><b>{{ b.arrive }}</b><br /><span class="tiny muted">{{ short(to())
               }}</span></span>
         </div>
-        <div class="row" style="flex-wrap:wrap">
+        <div class="row b-amen" style="flex-wrap:wrap">
           @for (a of b.amenities; track a) { <span class="chip chip-muted">{{ a }}</span> }
         </div>
         <div class="row between">
@@ -167,7 +155,7 @@
 
 <!-- Bus details slide in from the right (address gets ?details=<bus id>, so Back closes it). -->
 @if (detailsBusId() !== null) {
-  <app-bus-drawer (closed)="closeDetails()" (pick)="pickFromDetails($event)" />
+  <app-bus-drawer (closed)="closeDetails()" />
 }
 
 @if (couponOffer(); as o) {
