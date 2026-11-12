@@ -1,0 +1,168 @@
+<section class="hc-hero">
+  @if (op.hero().image && !bgFailed()) {
+    <img class="hc-bg" [src]="op.hero().image" alt="" aria-hidden="true" decoding="async" (error)="bgFailed.set(true)" />
+  }
+  <span class="hc-scrim" aria-hidden="true"></span>
+  <div class="hc-in">
+    <div class="hc-copy">
+      <span class="hc-badge"><app-icon name="star" [size]="14" />{{ op.hero().badge }}</span>
+      <h1>{{ op.hero().title }} <em>{{ op.hero().highlight }}</em></h1>
+      <ul class="hc-points">
+        @for (p of op.hero().points; track p) {
+          <li><app-icon name="check-circle" [size]="16" />{{ p }}</li>
+        }
+      </ul>
+      <div class="hc-trust">
+        <span class="hc-score"><b>{{ s.travellerReviews.rating }}</b><i>★★★★★</i></span>
+        <span class="hc-trust-t">{{ s.travellerReviews.count }} happy travellers<small>Rated on Google</small></span>
+      </div>
+    </div>
+    <div class="hc-card">
+      <app-search-form mode="simple" />
+    </div>
+  </div>
+</section>
+
+@if (s.recent().length) {
+  <section class="hc-recent" aria-label="Recent searches">
+    <header class="hc-rc-head">
+      <h2><app-icon name="clock" [size]="22" />Recent searches</h2>
+    </header>
+    <div class="hc-rc-list">
+      @for (r of s.recent().slice(0, 3); track r.from + r.to + r.date) {
+        <button type="button" class="hc-tk" (click)="again(r)" [appTip]="r.from + ' → ' + r.to" [attr.aria-label]="'Search again: ' + r.from + ' to ' + r.to">
+          <span class="hc-tk-body">
+            <span class="hc-tk-route">{{ r.from }} <i>→</i> {{ r.to }}</span>
+            <span class="hc-tk-date"><app-icon name="calendar" [size]="16" />{{ fmt(r.date) }}</span>
+          </span>
+          <span class="hc-tk-go"><app-icon name="chevron-right" [size]="16" /></span>
+        </button>
+      }
+    </div>
+  </section>
+}
+
+<section class="hc-band">
+  <div class="hc-wrap"><app-offers-carousel [offers]="s.offers" viewAll="/offers" /></div>
+</section>
+
+<section class="hc-sec">
+  <header class="hc-head row"><div><h2>Where to next?</h2><p>Popular destinations our travellers love</p></div>
+    <div class="hc-act">
+      <a routerLink="/search" class="hc-all">View all<app-icon name="chevron-right" [size]="16" /></a>
+      <div class="hc-nav">
+        <button type="button" aria-label="Previous destinations" (click)="slide(track, -1)"><app-icon name="chevron-left" [size]="18" /></button>
+        <button type="button" aria-label="Next destinations" (click)="slide(track, 1)"><app-icon name="chevron-right" [size]="18" /></button>
+      </div>
+    </div></header>
+  <div class="hc-dest" #track>
+    @for (r of s.exploreRoutes; track r.from + r.to) {
+      <button type="button" class="hc-d" (click)="pickRoute(r)" [attr.aria-label]="'Explore ' + r.from + ' to ' + r.to">
+        @if (r.img) { <img [src]="r.img" alt="" loading="lazy" decoding="async" /> }
+        <span class="hc-d-in"><b>{{ r.to }}</b><small>Explore now<app-icon name="chevron-right" [size]="14" /></small></span>
+      </button>
+    }
+  </div>
+</section>
+
+<section class="hc-sec hc-steps-sec">
+  <header class="hc-head"><h2>Book in four easy steps</h2><p>From search to boarding pass in under two minutes.</p></header>
+  <ol class="hc-steps">
+    @for (st of steps; track st.title) {
+      <li>
+        <span class="hc-step-ic"><app-icon [name]="st.icon" [size]="24" /></span>
+        <b>{{ st.title }}</b><small>{{ st.text }}</small>
+        @switch (st.icon) {
+          @case ('search') { <svg class="hc-step-art" viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><circle cx="78" cy="56" r="14" /><circle cx="78" cy="56" r="30" /><circle cx="78" cy="56" r="46" stroke-dasharray="4 6" /><circle cx="78" cy="56" r="5" fill="currentColor" stroke="none" /></svg> }
+          @case ('bus') { <svg class="hc-step-art" viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 78 C34 78 36 44 62 44 S92 24 108 20" stroke-dasharray="2 9" /><circle cx="10" cy="78" r="6" fill="currentColor" stroke="none" /><path d="M108 8a10 10 0 0 1 10 10c0 8-10 20-10 20s-10-12-10-20a10 10 0 0 1 10-10z" fill="currentColor" stroke="none" /></svg> }
+          @case ('ticket') { <svg class="hc-step-art" viewBox="0 0 120 90" fill="currentColor" aria-hidden="true"><rect x="40" y="14" width="16" height="16" rx="4" /><rect x="62" y="14" width="16" height="16" rx="4" opacity=".4" /><rect x="84" y="14" width="16" height="16" rx="4" /><rect x="40" y="36" width="16" height="16" rx="4" opacity=".4" /><rect x="62" y="36" width="16" height="16" rx="4" /><rect x="84" y="36" width="16" height="16" rx="4" opacity=".4" /><rect x="40" y="58" width="16" height="16" rx="4" /><rect x="62" y="58" width="16" height="16" rx="4" opacity=".4" /><rect x="84" y="58" width="16" height="16" rx="4" /></svg> }
+          @default { <svg class="hc-step-art" viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="82" cy="46" r="32" /><circle cx="82" cy="46" r="22" stroke-dasharray="3 6" /><path d="M70 47l9 9 17-19" stroke-width="5" /></svg> }
+        }
+      </li>
+    }
+  </ol>
+</section>
+
+<section class="hc-sec">
+  <header class="hc-head row"><div><h2>Popular Routes</h2><p>Live fares on the busiest routes</p></div>
+    <a routerLink="/search" class="hc-all">View all<app-icon name="chevron-right" [size]="16" /></a></header>
+  <div class="hc-board" role="table">
+    <div class="hc-board-h" role="row"><span>Route</span><span>Journey</span><span>Fare</span><span></span></div>
+    @for (r of s.topRoutes.slice(0, 6); track r.from + r.to) {
+      <div class="hc-line" role="row">
+        <span class="hc-r"><b>{{ r.from }}</b><i>to</i><b>{{ r.to }}</b></span>
+        <span class="hc-j"><app-icon name="clock" [size]="14" />{{ r.duration }}</span>
+        <span class="hc-f">{{ r.cur ?? '$' }}{{ r.price }}<small>onwards</small></span>
+        <button type="button" class="hc-b" (click)="pickRoute(r)">Book<app-icon name="arrow-right" [size]="14" /></button>
+      </div>
+    }
+  </div>
+</section>
+
+<section class="hc-dark">
+  <div class="hc-wrap">
+    <header class="hc-head on"><h2>Why travel with {{ s.brand }}</h2><p>{{ s.about.title }}</p></header>
+    <div class="hc-nums">
+      @for (t of op.stats().slice(0, 4); track t.label) {
+        <div><b>{{ t.value }}</b><span>{{ t.label }}</span></div>
+      }
+    </div>
+    <div class="hc-promises">
+      @for (p of promises; track p.title) {
+        <div><span class="hc-pic"><app-icon [name]="p.icon" [size]="22" /></span><b>{{ p.title }}</b><small>{{ p.text }}</small></div>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="hc-sec">
+  <header class="hc-head"><h2>What our travellers say</h2></header>
+  <div class="hc-rv">
+    <div class="hc-rv-sum">
+      <b>{{ s.travellerReviews.rating }}</b>
+      <i aria-hidden="true">★★★★★</i>
+      <span>Based on {{ s.travellerReviews.count }} reviews</span>
+    </div>
+    <div class="hc-rv-list">
+      @for (r of s.travellerReviews.items.slice(0, 2); track r.name) {
+        <article>
+          <p>“{{ r.text }}”</p>
+          <footer><span class="hc-av">{{ r.name.charAt(0) }}</span><span><b>{{ r.name }}</b><small>{{ r.trip }}</small></span>
+            <span class="hc-ver"><app-icon name="check-circle" [size]="14" />Verified</span></footer>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="hc-sec">
+  <div class="hc-am">
+    <div class="hc-am-t">
+      <h2>{{ s.comfort.title }}</h2>
+      <p>{{ s.comfort.text }}</p>
+      <div class="hc-am-grid">
+        @for (a of s.comfort.items; track a.label) {
+          <span><app-icon [name]="a.icon" [size]="20" />{{ a.label }}</span>
+        }
+      </div>
+    </div>
+    <img [src]="s.comfort.image" alt="Comfortable bus interior" loading="lazy" />
+  </div>
+</section>
+
+<section class="hc-sec hc-faq">
+  <header class="hc-head center"><h2>Frequently asked questions</h2></header>
+  <div class="hc-acc">
+    @for (f of s.faqs; track f.q; let i = $index) {
+      <div class="hc-q" [class.on]="open() === i">
+        <button type="button" (click)="open.set(open() === i ? null : i)" [attr.aria-expanded]="open() === i">{{ f.q }}<span><app-icon name="plus" [size]="16" /></span></button>
+        @if (open() === i) { <p>{{ f.a }}</p> }
+      </div>
+    }
+  </div>
+  <div class="hc-cta">
+    <div><b>Still have questions?</b><span>Our team is happy to help, any time.</span></div>
+    <a routerLink="/support">Contact support<app-icon name="arrow-right" [size]="16" /></a>
+  </div>
+</section>
+

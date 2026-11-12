@@ -8,7 +8,7 @@
     <a class="site-logo" routerLink="/home"><span class="logo" [class.has-img]="!!op.brand().logoUrl">@if (op.brand().logoUrl) { <img [src]="op.brand().logoUrl" [alt]="s.brand" /> } @else { <app-icon name="bus" [size]="20" /> }</span>{{ s.brand }}</a>
     <nav class="site-nav" aria-label="Primary">
       @for (n of siteNav; track n.label) {
-        <a [routerLink]="n.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ n.label }}</a>
+        <a [routerLink]="n.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" [class.cur]="n.link === '/home' && meta().tab === 'home'">{{ n.label }}</a>
       }
     </nav>
     <h1 class="title"><app-icon [name]="meta().icon" [size]="20" />{{ meta().title }}</h1>

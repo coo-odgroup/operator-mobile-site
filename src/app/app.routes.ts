@@ -16,6 +16,7 @@ export const routes: Routes = [
 
       // --- screens in the design file ---
       { path: 'home', loadComponent: () => import('./pages/home/home').then((m) => m.Home), data: { icon: 'bus', tab: 'home' } },
+      { path: 'home-2', loadComponent: () => import('./pages/home-2/home-2').then((m) => m.Home2), data: { icon: 'bus', tab: 'home' } },
       { path: 'search', loadComponent: () => import('./pages/search/search').then((m) => m.SearchPage), data: { title: 'Search', icon: 'search', tab: 'search' } },
       { path: 'bookings', loadComponent: () => import('./pages/bookings/bookings').then((m) => m.Bookings), data: { title: 'My Bookings', icon: 'ticket', tab: 'bookings' } },
       { path: 'offers', loadComponent: () => import('./pages/offers/offers').then((m) => m.Offers), data: { title: 'Offers & Rewards', icon: 'gift', tab: 'offers' } },

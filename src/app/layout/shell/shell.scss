@@ -179,9 +179,23 @@
   }
   .site-nav {
     display: flex; gap: 6px; margin-left: 12px; flex: 1;
-    a { padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text); &:hover { background: var(--brand-soft); color: var(--brand); } &.active { color: var(--brand); font-weight: 600; } }
+    a { padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text); &:hover { background: var(--brand-soft); color: var(--brand); } &.active, &.cur { color: var(--brand); font-weight: 600; } }
   }
   .login-btn { display: inline-flex; }
+
+  // Pages with a full-width hero (Home 2) add `hero-over` to <body>: the top bar floats transparent over the hero
+  // and turns back to the normal white bar once `hero-scrolled` is added. No class = no change anywhere else.
+  :host-context(.hero-over) .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 30;
+    transition: background-color .25s ease, box-shadow .25s ease, color .25s ease;
+  }
+  :host-context(.hero-over:not(.hero-scrolled)) .topbar {
+    background: transparent; box-shadow: none; color: #fff;
+    .site-logo { color: #fff; .logo { background: rgba(255, 255, 255, 0.18); } }
+    .site-nav a { position: relative; color: rgba(255, 255, 255, 0.9); &:hover { background: rgba(255, 255, 255, 0.14); color: #fff; } &.active, &.cur { color: #fff; } &.active::after, &.cur::after { content: ''; position: absolute; left: 14px; right: 14px; bottom: 3px; height: 2px; border-radius: 2px; background: #fff; } }
+    .actions .ib { color: #fff; background: rgba(255, 255, 255, 0.16); &.dot::after { border-color: transparent; } }
+    .login-btn { background: #fff; color: var(--brand-dark); box-shadow: none; }
+  }
   .title, .menu-btn, .tabbar, .drawer, .scrim { display: none !important; }
   .topbar > .ib:first-child { display: none; }
   .actions { gap: 6px; .ib { color: var(--brand); background: var(--brand-soft); &.dot::after { border-color: var(--surface); } } }

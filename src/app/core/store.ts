@@ -237,6 +237,17 @@ export class Store {
     { from: 'Philadelphia', to: 'Washington DC', price: 26, duration: '2h 45m', tag: 'Weekend trips' },
     { from: 'Washington DC', to: 'Philadelphia', price: 27, duration: '2h 50m', tag: 'Weekend trips' },
   ];
+  /** Home 2 "Where to next?" slider. Cards without `img` show a coloured card; drop a photo in /public/photos/routes and set `img`. */
+  readonly exploreRoutes: RouteInfo[] = [
+    { from: 'Bhubaneswar', to: 'Puri', price: 180, duration: '2h 00m', cur: '₹', img: '/photos/routes/puri.jpg' },
+    { from: 'Cuttack', to: 'Bhubaneswar', price: 80, duration: '0h 45m', cur: '₹', img: '/photos/routes/bhubaneswar.jpg' },
+    { from: 'Bhubaneswar', to: 'Sambalpur', price: 450, duration: '5h 30m', cur: '₹', img: '/photos/routes/sambalpur.jpg' },
+    { from: 'Bhubaneswar', to: 'Gopalpur', price: 320, duration: '4h 15m', cur: '₹', img: '/photos/routes/gopalpur.jpg' },
+    { from: 'Bhubaneswar', to: 'Konark', price: 120, duration: '1h 45m', cur: '₹' },
+    { from: 'Bhubaneswar', to: 'Chilika', price: 150, duration: '2h 15m', cur: '₹' },
+    { from: 'Bhubaneswar', to: 'Rourkela', price: 600, duration: '7h 00m', cur: '₹' },
+    { from: 'Bhubaneswar', to: 'Berhampur', price: 300, duration: '3h 30m', cur: '₹' },
+  ];
   /** Home "Popular routes" slider (no photos). Replace with the real top-routes API. */
   readonly topRoutes: RouteInfo[] = [
     { from: 'Bhubaneswar', to: 'Puri', price: 180, duration: '2h 00m', cur: '₹' },
