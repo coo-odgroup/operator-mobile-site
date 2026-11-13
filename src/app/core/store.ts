@@ -150,14 +150,43 @@ export class Store {
   private readonly operator = inject(OperatorConfigService);
   /** Brand name comes from the operator config (core/operator-config.ts). */
   get brand() { return this.operator.brand().name; }
-  /** FAQ on Home. Backend: GET /content/faqs -> [{ q, a }] (plain text). */
-  readonly faqs = [
-    { q: 'How do I book a bus ticket?', a: 'Choose From, To and the date, pick a bus and seats, verify your details and pay.' },
-    { q: 'Where can I find my ticket?', a: 'Open Manage Booking to see and print all your tickets.' },
-    { q: 'Which payment methods are accepted?', a: 'Cards, UPI and wallets, depending on what your gateway supports.' },
-    { q: 'How do cancellations and refunds work?', a: 'Cancel from Manage Booking; the refund depends on the cancellation policy of the trip.' },
-    { q: 'Can I change my travel date after booking?', a: 'Rescheduling depends on the operator. Open Manage Booking to see the options for your trip, or contact support.' },
-    { q: 'How do I use an offer code?', a: 'Enter the code on the payment step. The discount shows in your fare summary before you pay.' },
+  /** FAQ with topic tabs on both Home layouts. Backend: GET /content/faq-topics -> [{ topic, items: [{ q, a }] }] (plain text). */
+  readonly faqTopics = [
+    {
+      topic: 'General',
+      items: [
+        { q: 'What is an e-ticket?', a: 'An e-ticket is the digital version of your bus ticket. You get it by SMS and email right after booking, so you can board by showing it on your phone.' },
+        { q: 'Do I need an account to book a ticket?', a: 'You can search without an account. To book, sign in with your mobile number so we can send your ticket and keep your trips in one place.' },
+        { q: 'Does booking online cost more?', a: 'No. The fare is the same as the operator’s counter fare. Any convenience fee is shown before you pay.' },
+        { q: 'Can I book a multi-city trip?', a: 'Book each leg as a separate trip. Choose the second leg’s date after your first bus arrives.' },
+        { q: 'What should I know when travelling with an infant?', a: 'Rules for infants differ by operator. Check the bus details or contact support before you book.' },
+      ],
+    },
+    {
+      topic: 'Ticket related',
+      items: [
+        { q: 'Where can I find my ticket?', a: 'Open Manage Booking to see and print all your tickets.' },
+        { q: 'Can I change my travel date after booking?', a: 'Rescheduling depends on the operator. Open Manage Booking to see the options for your trip, or contact support.' },
+        { q: 'What do I show when boarding?', a: 'Show the e-ticket on your phone along with a valid photo ID.' },
+        { q: 'How do I find my boarding point?', a: 'The boarding point, time and contact number are on your ticket and in Manage Booking.' },
+      ],
+    },
+    {
+      topic: 'Payment',
+      items: [
+        { q: 'Which payment methods are accepted?', a: 'Cards, UPI and wallets, depending on what your gateway supports.' },
+        { q: 'How do I use an offer code?', a: 'Enter the code on the payment step. The discount shows in your fare summary before you pay.' },
+        { q: 'My money was deducted but I got no ticket. What now?', a: 'Failed bookings are refunded to the source account automatically. If you see no refund in a few days, contact support with your payment reference.' },
+      ],
+    },
+    {
+      topic: 'Cancellation & refund',
+      items: [
+        { q: 'How do cancellations and refunds work?', a: 'Cancel from Manage Booking; the refund depends on the cancellation policy of the trip.' },
+        { q: 'When will I get my refund?', a: 'Refunds go back to the original payment method. The time taken depends on your bank or wallet.' },
+        { q: 'What happens if the operator cancels the trip?', a: 'You get a full refund, and we will tell you by SMS and email.' },
+      ],
+    },
   ];
   /** "Bus amenities" section on Home. Backend: GET /content/amenities. `icon` must be an app-icon name. */
   readonly comfort = {
@@ -202,6 +231,15 @@ export class Store {
     ],
     cta: { label: 'Know more about us', link: '/support' },
   };
+  /** Help strip shown above the FAQ. The backend replaces the phone and email with the operator's own. */
+  readonly help = {
+    title: 'Need help with a booking?',
+    text: 'Talk to our team. Keep your PNR ready.',
+    phone: '+91 90000 00000',
+    email: 'support@example.com',
+    link: '/support',
+    linkLabel: 'Help and support',
+  };
   readonly cities = CITIES;
   readonly points = 2450;
   readonly tiers = [
@@ -223,6 +261,11 @@ export class Store {
     { from: 'Washington DC', to: 'Philadelphia', date: '2025-04-10', passengers: 2 },
     { from: 'Bhubaneswar', to: 'Puri', date: '2025-04-05', passengers: 1 },
   ]);
+  /** Home 2 "Recent searches" strip: demo filler card after the real ones. Replace with the recent-searches API and delete this. */
+  readonly recentHome2 = computed<RecentSearch[]>(() => [
+    ...this.recent(),
+    { from: 'Bhubaneswar', to: 'Konark', date: '2025-04-02', passengers: 1 },
+  ]);
   readonly popularRoutes: RouteInfo[] = [
     { from: 'Bhubaneswar', to: 'Puri', price: 180, duration: '2h 00m', tag: 'Odisha', cur: '₹', img: '/photos/routes/puri.jpg' },
     { from: 'Cuttack', to: 'Bhubaneswar', price: 80, duration: '0h 45m', tag: 'Odisha', cur: '₹', img: '/photos/routes/bhubaneswar.jpg' },
@@ -239,14 +282,14 @@ export class Store {
   ];
   /** Home 2 "Where to next?" slider. Cards without `img` show a coloured card; drop a photo in /public/photos/routes and set `img`. */
   readonly exploreRoutes: RouteInfo[] = [
-    { from: 'Bhubaneswar', to: 'Puri', price: 180, duration: '2h 00m', cur: '₹', img: '/photos/routes/puri.jpg' },
-    { from: 'Cuttack', to: 'Bhubaneswar', price: 80, duration: '0h 45m', cur: '₹', img: '/photos/routes/bhubaneswar.jpg' },
-    { from: 'Bhubaneswar', to: 'Sambalpur', price: 450, duration: '5h 30m', cur: '₹', img: '/photos/routes/sambalpur.jpg' },
-    { from: 'Bhubaneswar', to: 'Gopalpur', price: 320, duration: '4h 15m', cur: '₹', img: '/photos/routes/gopalpur.jpg' },
-    { from: 'Bhubaneswar', to: 'Konark', price: 120, duration: '1h 45m', cur: '₹' },
-    { from: 'Bhubaneswar', to: 'Chilika', price: 150, duration: '2h 15m', cur: '₹' },
-    { from: 'Bhubaneswar', to: 'Rourkela', price: 600, duration: '7h 00m', cur: '₹' },
-    { from: 'Bhubaneswar', to: 'Berhampur', price: 300, duration: '3h 30m', cur: '₹' },
+    { from: 'Bhubaneswar', to: 'Puri', price: 180, duration: '2h 00m', cur: '₹', tag: 'Pilgrimage', img: '/photos/routes/puri.jpg' },
+    { from: 'Cuttack', to: 'Bhubaneswar', price: 80, duration: '0h 45m', cur: '₹', tag: 'Heritage', img: '/photos/routes/bhubaneswar.jpg' },
+    { from: 'Bhubaneswar', to: 'Sambalpur', price: 450, duration: '5h 30m', cur: '₹', tag: 'Nature', img: '/photos/routes/sambalpur.jpg' },
+    { from: 'Bhubaneswar', to: 'Gopalpur', price: 320, duration: '4h 15m', cur: '₹', tag: 'Beach', img: '/photos/routes/gopalpur.jpg' },
+    { from: 'Bhubaneswar', to: 'Konark', price: 120, duration: '1h 45m', cur: '₹', tag: 'Heritage' },
+    { from: 'Bhubaneswar', to: 'Chilika', price: 150, duration: '2h 15m', cur: '₹', tag: 'Lake' },
+    { from: 'Bhubaneswar', to: 'Rourkela', price: 600, duration: '7h 00m', cur: '₹', tag: 'Steel city' },
+    { from: 'Bhubaneswar', to: 'Berhampur', price: 300, duration: '3h 30m', cur: '₹', tag: 'Silk city' },
   ];
   /** Home "Popular routes" slider (no photos). Replace with the real top-routes API. */
   readonly topRoutes: RouteInfo[] = [

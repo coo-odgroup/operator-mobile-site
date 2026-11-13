@@ -24,7 +24,13 @@ export class Home2 {
   /** "Fri, 13 Nov" */
   protected readonly fmt = (iso: string) =>
     new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+  /** FAQ: selected topic tab and the open question inside it. */
+  protected readonly faqTab = signal(0);
   protected readonly open = signal<number | null>(0);
+  /** Selected card in "Where to next?" */
+  protected readonly wn = signal(0);
+  private wnLock = 0;
+  private wnRaf = 0;
 
   constructor() {
     // Lets the top bar (layout/shell) sit transparent over this hero, then turn white after a little scroll.
@@ -63,6 +69,51 @@ export class Home2 {
   /** Slides a horizontal track by ~80% of its width (arrow buttons on desktop). */
   protected slide(el: HTMLElement, dir: 1 | -1) {
     el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' });
+  }
+
+  // ---- "Where to next?" ----
+
+  /** Tap a side card to select it; tap the selected card to explore that route. */
+  protected wnPick(r: RouteInfo, i: number, track: HTMLElement) {
+    if (i === this.wn()) return this.pickRoute(r);
+    this.wnGo(i, track);
+  }
+
+  protected wnStep(dir: 1 | -1, track: HTMLElement) {
+    const n = this.s.exploreRoutes.length;
+    this.wnGo((this.wn() + dir + n) % n, track);
+  }
+
+  /** A finger or wheel takes over from any slide the buttons started. */
+  protected wnUnlock() {
+    this.wnLock = 0;
+  }
+
+  /** While swiping, keep the selected card, background and counter in step with the card at the left edge. */
+  protected wnScroll(track: HTMLElement) {
+    if (performance.now() < this.wnLock || this.wnRaf) return;
+    this.wnRaf = requestAnimationFrame(() => {
+      this.wnRaf = 0;
+      const i = Math.min(this.s.exploreRoutes.length - 1, Math.round(track.scrollLeft / this.wnStride(track)));
+      if (i !== this.wn()) this.wn.set(i);
+    });
+  }
+
+  private wnGo(i: number, track: HTMLElement) {
+    this.wn.set(i);
+    this.wnLock = performance.now() + 700; // ignore the scroll events caused by this slide
+    track.scrollTo({ left: Math.min(i * this.wnStride(track), track.scrollWidth - track.clientWidth), behavior: 'smooth' });
+  }
+
+  /** Distance between two cards, read from the --wn-w / --wn-gap CSS variables so TS and SCSS never disagree. */
+  private wnStride(track: HTMLElement) {
+    const cs = getComputedStyle(track);
+    return (parseFloat(cs.getPropertyValue('--wn-w')) || 1) + (parseFloat(cs.getPropertyValue('--wn-gap')) || 0);
+  }
+
+  protected faqPick(i: number) {
+    this.faqTab.set(i);
+    this.open.set(0);
   }
 
   protected again(r: RecentSearch) {

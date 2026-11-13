@@ -92,6 +92,11 @@ export class Home {
     if (el) el.scrollBy({ left: dir * Math.max(240, el.clientWidth * 0.8), behavior: 'smooth' });
   }
   protected readonly open = signal('');
+  protected readonly faqTab = signal(0);
+  protected faqPick(i: number) {
+    this.faqTab.set(i);
+    this.open.set('');
+  }
   protected readonly couponOpen = signal(false);
   /** Falls back to the drawn illustration if the hero photo can't load. */
   protected readonly artFailed = signal(false);

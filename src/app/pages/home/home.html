@@ -2,9 +2,10 @@
   <div class="d-band">
     <div class="d-art">
       @if (!artFailed()) {
-        <img [src]="op.hero().image" alt="" width="1708" height="920" loading="lazy" decoding="async" (error)="artFailed.set(true)" />
+      <img [src]="op.hero().image" alt="" width="1708" height="920" loading="lazy" decoding="async"
+        (error)="artFailed.set(true)" />
       } @else {
-        <app-hero-art />
+      <app-hero-art />
       }
     </div>
     <div class="d-in">
@@ -12,13 +13,13 @@
       <h1>{{ op.hero().title }} <em>{{ op.hero().highlight }}</em></h1>
       <ul class="d-points">
         @for (p of op.hero().points; track p) {
-          <li><app-icon name="check-circle" [size]="16" />{{ p }}</li>
+        <li><app-icon name="check-circle" [size]="16" />{{ p }}</li>
         }
       </ul>
       @if (s.offers[0]; as o) {
-        <button type="button" class="d-offer" (click)="couponOpen.set(true)">
-          <app-icon name="ticket" [size]="16" />Use <b>{{ o.code }}</b> · {{ o.badge }}
-        </button>
+      <button type="button" class="d-offer" (click)="couponOpen.set(true)">
+        <app-icon name="ticket" [size]="16" />Use <b>{{ o.code }}</b> · {{ o.badge }}
+      </button>
       }
     </div>
   </div>
@@ -26,26 +27,27 @@
 </section>
 
 @if (s.recent().length) {
-  <section class="rs-sec">
-    <div class="rt-head">
-      <h2>Recent searches</h2>
-      <span class="rs-hint">Pick up where you left off</span>
-    </div>
-    <div class="rs-grid">
-      @for (r of s.recent().slice(0, 3); track r.from + r.to + r.date) {
-        <button type="button" class="rs-card" (click)="again(r)" [appTip]="r.from + ' → ' + r.to" [attr.aria-label]="'Search again: ' + r.from + ' to ' + r.to">
-          <span class="rs-ic"><app-icon name="bus" [size]="20" /></span>
-          <span class="rs-body">
-            <span class="rs-route">{{ short(r.from) }} <i>→</i> {{ short(r.to) }}</span>
-            <span class="rs-meta">
-              <span><app-icon name="calendar" [size]="13" />{{ fmt(r.date) }}</span>
-            </span>
-          </span>
-          <span class="rs-go"><app-icon name="search" [size]="16" /></span>
-        </button>
-      }
-    </div>
-  </section>
+<section class="rs-sec">
+  <div class="rt-head">
+    <h2>Recent searches</h2>
+    <span class="rs-hint">Pick up where you left off</span>
+  </div>
+  <div class="rs-grid">
+    @for (r of s.recent().slice(0, 3); track r.from + r.to + r.date) {
+    <button type="button" class="rs-card" (click)="again(r)" [appTip]="r.from + ' → ' + r.to"
+      [attr.aria-label]="'Search again: ' + r.from + ' to ' + r.to">
+      <span class="rs-ic"><app-icon name="bus" [size]="20" /></span>
+      <span class="rs-body">
+        <span class="rs-route">{{ short(r.from) }} <i>→</i> {{ short(r.to) }}</span>
+        <span class="rs-meta">
+          <span><app-icon name="calendar" [size]="13" />{{ fmt(r.date) }}</span>
+        </span>
+      </span>
+      <span class="rs-go"><app-icon name="search" [size]="16" /></span>
+    </button>
+    }
+  </div>
+</section>
 }
 
 <section class="offers-sec">
@@ -58,25 +60,28 @@
     <div class="pr-actions">
       <a routerLink="/search" class="pr-all">View all<app-icon name="chevron-right" [size]="16" /></a>
       <div class="rt-nav">
-        <button type="button" aria-label="Previous routes" (click)="scrollRoutes(-1)"><app-icon name="chevron-left" [size]="18" /></button>
-        <button type="button" aria-label="Next routes" (click)="scrollRoutes(1)"><app-icon name="chevron-right" [size]="18" /></button>
+        <button type="button" aria-label="Previous routes" (click)="scrollRoutes(-1)"><app-icon name="chevron-left"
+            [size]="18" /></button>
+        <button type="button" aria-label="Next routes" (click)="scrollRoutes(1)"><app-icon name="chevron-right"
+            [size]="18" /></button>
       </div>
     </div>
   </div>
   <div class="rt-track" #rtTrack>
     @for (r of s.popularRoutes; track r.from + r.to; let i = $index) {
-      <button type="button" [class]="'rt-card tone-' + (i % 5)" (click)="pickRoute(r)" [attr.aria-label]="'Explore ' + r.from + ' to ' + r.to">
-        <span class="rt-img">
-          @if (r.img) { <img [src]="r.img" alt="" loading="lazy" decoding="async" /> }
+    <button type="button" [class]="'rt-card tone-' + (i % 5)" (click)="pickRoute(r)"
+      [attr.aria-label]="'Explore ' + r.from + ' to ' + r.to">
+      <span class="rt-img">
+        @if (r.img) { <img [src]="r.img" alt="" loading="lazy" decoding="async" /> }
+      </span>
+      <span class="rt-body">
+        <span class="rt-text">
+          <span class="rt-route">{{ r.to }}</span>
+          <span class="rt-sub">Explore destination</span>
         </span>
-        <span class="rt-body">
-          <span class="rt-text">
-            <span class="rt-route">{{ r.to }}</span>
-            <span class="rt-sub">Explore destination</span>
-          </span>
-          <span class="rt-go"><app-icon name="arrow-right" [size]="16" /></span>
-        </span>
-      </button>
+        <span class="rt-go"><app-icon name="arrow-right" [size]="16" /></span>
+      </span>
+    </button>
     }
   </div>
 </section>
@@ -88,13 +93,15 @@
   </div>
   <div class="trust-in">
     @for (t of op.stats(); track t.label; let i = $index) {
-      <div class="trust-item">
-        <span class="trust-ic" [class.pre]="armed() && !started()" [class.pop]="started() && armed()" [style.--i]="i"><app-icon [name]="t.icon" [size]="22" /></span>
-        <span>
-          <b class="cnt"><span class="sr">{{ t.value }}</span><i class="cnt-g" aria-hidden="true">{{ t.value }}</i><span class="cnt-n" aria-hidden="true">{{ shown(t.value) }}</span></b>
-          <small>{{ t.label }}</small>
-        </span>
-      </div>
+    <div class="trust-item">
+      <span class="trust-ic" [class.pre]="armed() && !started()" [class.pop]="started() && armed()"
+        [style.--i]="i"><app-icon [name]="t.icon" [size]="22" /></span>
+      <span>
+        <b class="cnt"><span class="sr">{{ t.value }}</span><i class="cnt-g" aria-hidden="true">{{ t.value }}</i><span
+            class="cnt-n" aria-hidden="true">{{ shown(t.value) }}</span></b>
+        <small>{{ t.label }}</small>
+      </span>
+    </div>
     }
   </div>
 </section>
@@ -105,34 +112,39 @@
     <div class="pr-actions">
       <a routerLink="/search" class="pr-all">View all<app-icon name="chevron-right" [size]="16" /></a>
       <div class="rt-nav">
-        <button type="button" aria-label="Previous routes" (click)="slide(prTrack, -1)"><app-icon name="chevron-left" [size]="18" /></button>
-        <button type="button" aria-label="Next routes" (click)="slide(prTrack, 1)"><app-icon name="chevron-right" [size]="18" /></button>
+        <button type="button" aria-label="Previous routes" (click)="slide(prTrack, -1)"><app-icon name="chevron-left"
+            [size]="18" /></button>
+        <button type="button" aria-label="Next routes" (click)="slide(prTrack, 1)"><app-icon name="chevron-right"
+            [size]="18" /></button>
       </div>
     </div>
   </div>
   <div class="pr-track" #prTrack>
     @for (r of s.topRoutes; track r.from + r.to) {
-      <button type="button" class="pr-card" (click)="pickRoute(r)" [attr.aria-label]="r.from + ' to ' + r.to + ', from ' + (r.cur ?? '$') + r.price">
-        <span class="pr-top">
-          <span class="pr-ic"><app-icon name="bus" [size]="18" /></span>
-          <span class="pr-dur"><app-icon name="clock" [size]="12" />{{ r.duration }}</span>
-        </span>
-        <span class="pr-path">
-          <span class="pr-stop">{{ r.from }}</span>
-          <span class="pr-stop">{{ r.to }}</span>
-        </span>
-        <span class="pr-foot">
-          <span class="pr-price"><small>From</small> {{ r.cur ?? '$' }}{{ r.price }}</span>
-          <span class="rt-go"><app-icon name="arrow-right" [size]="16" /></span>
-        </span>
-      </button>
+    <button type="button" class="pr-card" (click)="pickRoute(r)"
+      [attr.aria-label]="r.from + ' to ' + r.to + ', from ' + (r.cur ?? '$') + r.price">
+      <span class="pr-top">
+        <span class="pr-ic"><app-icon name="bus" [size]="18" /></span>
+        <span class="pr-dur"><app-icon name="clock" [size]="12" />{{ r.duration }}</span>
+      </span>
+      <span class="pr-path">
+        <span class="pr-stop">{{ r.from }}</span>
+        <span class="pr-stop">{{ r.to }}</span>
+      </span>
+      <span class="pr-foot">
+        <span class="pr-price"><small>From</small> {{ r.cur ?? '$' }}{{ r.price }}</span>
+        <span class="rt-go"><app-icon name="arrow-right" [size]="16" /></span>
+      </span>
+    </button>
     }
   </div>
 </section>
 
 <!-- About -->
 <section class="about-sec">
-  <div class="rt-head"><h2>About {{ s.brand }}</h2></div>
+  <div class="rt-head">
+    <h2>About {{ s.brand }}</h2>
+  </div>
   <div class="about">
     <img class="about-img" [src]="s.about.image" [alt]="'About ' + s.brand" loading="lazy" />
     <div class="about-body">
@@ -140,10 +152,11 @@
       <p>{{ s.brand }} {{ s.about.text }}</p>
       <div class="about-stats">
         @for (st of s.about.stats; track st.label) {
-          <div><b>{{ st.value }}</b><span>{{ st.label }}</span></div>
+        <div><b>{{ st.value }}</b><span>{{ st.label }}</span></div>
         }
       </div>
-      <a class="about-btn" [routerLink]="s.about.cta.link">{{ s.about.cta.label }}<app-icon name="arrow-right" [size]="16" /></a>
+      <a class="about-btn" [routerLink]="s.about.cta.link">{{ s.about.cta.label }}<app-icon name="arrow-right"
+          [size]="16" /></a>
     </div>
   </div>
 </section>
@@ -156,10 +169,13 @@
       <p>Honest reviews from people who travelled with {{ s.brand }}</p>
     </div>
     <div class="pr-actions">
-      <a [href]="s.travellerReviews.allUrl" target="_blank" rel="noopener" class="pr-all">View all<app-icon name="chevron-right" [size]="16" /></a>
+      <a [href]="s.travellerReviews.allUrl" target="_blank" rel="noopener" class="pr-all">View all<app-icon
+          name="chevron-right" [size]="16" /></a>
       <div class="rt-nav">
-        <button type="button" aria-label="Previous reviews" (click)="slide(rvTrack, -1)"><app-icon name="chevron-left" [size]="18" /></button>
-        <button type="button" aria-label="Next reviews" (click)="slide(rvTrack, 1)"><app-icon name="chevron-right" [size]="18" /></button>
+        <button type="button" aria-label="Previous reviews" (click)="slide(rvTrack, -1)"><app-icon name="chevron-left"
+            [size]="18" /></button>
+        <button type="button" aria-label="Next reviews" (click)="slide(rvTrack, 1)"><app-icon name="chevron-right"
+            [size]="18" /></button>
       </div>
     </div>
   </div>
@@ -170,22 +186,25 @@
       <span class="rv-count">Based on {{ s.travellerReviews.count }} reviews</span>
     </article>
     @for (r of s.travellerReviews.items; track r.name) {
-      <article class="rv-card">
-        <header class="rv-who">
-          <span class="rv-av">{{ r.name.charAt(0) }}</span>
-          <span><b>{{ r.name }}</b><small>{{ r.trip }}</small></span>
-        </header>
-        <span class="rv-stars" [attr.aria-label]="r.stars + ' out of 5 stars'"><i aria-hidden="true">{{ '★'.repeat(r.stars) }}</i><i class="off" aria-hidden="true">{{ '★'.repeat(5 - r.stars) }}</i></span>
-        <p>{{ r.text }}</p>
-        <span class="rv-foot"><app-icon name="check-circle" [size]="14" />Verified traveller</span>
-      </article>
+    <article class="rv-card">
+      <header class="rv-who">
+        <span class="rv-av">{{ r.name.charAt(0) }}</span>
+        <span><b>{{ r.name }}</b><small>{{ r.trip }}</small></span>
+      </header>
+      <span class="rv-stars" [attr.aria-label]="r.stars + ' out of 5 stars'"><i aria-hidden="true">{{
+          '★'.repeat(r.stars) }}</i><i class="off" aria-hidden="true">{{ '★'.repeat(5 - r.stars) }}</i></span>
+      <p>{{ r.text }}</p>
+      <span class="rv-foot"><app-icon name="check-circle" [size]="14" />Verified traveller</span>
+    </article>
     }
   </div>
 </section>
 
 <!-- Amenities -->
 <section class="am-sec">
-  <div class="rt-head"><h2>Bus amenities</h2></div>
+  <div class="rt-head">
+    <h2>Bus amenities</h2>
+  </div>
   <div class="am">
     <img class="am-img" [src]="s.comfort.image" alt="Comfortable bus interior" loading="lazy" />
     <div class="am-body">
@@ -193,10 +212,11 @@
       <p>{{ s.comfort.text }}</p>
       <ul class="am-grid">
         @for (a of s.comfort.items; track a.label) {
-          <li><span class="am-ic"><app-icon [name]="a.icon" [size]="18" /></span>{{ a.label }}</li>
+        <li><span class="am-ic"><app-icon [name]="a.icon" [size]="18" /></span>{{ a.label }}</li>
         }
       </ul>
-      <a class="about-btn" [routerLink]="s.comfort.cta.link">{{ s.comfort.cta.label }}<app-icon name="arrow-right" [size]="16" /></a>
+      <a class="about-btn" [routerLink]="s.comfort.cta.link">{{ s.comfort.cta.label }}<app-icon name="arrow-right"
+          [size]="16" /></a>
     </div>
   </div>
 </section>
@@ -209,20 +229,32 @@
       <p>Quick answers about booking, payments and cancellations</p>
     </div>
   </div>
-  <div class="fq-grid">
-    @for (f of s.faqs; track f.q; let i = $index) {
-      <div class="fq" [class.open]="open() === f.q">
-        <button type="button" class="fq-q" (click)="open.set(open() === f.q ? '' : f.q)" [attr.aria-expanded]="open() === f.q" [attr.aria-controls]="'fq-a-' + i">
-          <span>{{ f.q }}</span>
-          <span class="fq-ic"><app-icon [name]="open() === f.q ? 'chevron-up' : 'chevron-down'" [size]="16" /></span>
-        </button>
-        <div class="fq-a" [id]="'fq-a-' + i" role="region"><div><p>{{ f.a }}</p></div></div>
-      </div>
+  <div class="fq-tabs" role="tablist" aria-label="FAQ topics">
+    @for (t of s.faqTopics; track t.topic; let ti = $index) {
+    <button type="button" role="tab" [class.on]="faqTab() === ti" [attr.aria-selected]="faqTab() === ti"
+      (click)="faqPick(ti)">{{ t.topic }}<small>{{ t.items.length }}</small></button>
     }
   </div>
-  <p class="fq-help">Still have questions? <a routerLink="/support">Contact support<app-icon name="chevron-right" [size]="14" /></a></p>
+  <div class="fq-grid" role="tabpanel">
+    @for (f of s.faqTopics[faqTab()].items; track f.q; let i = $index) {
+    <div class="fq" [class.open]="open() === f.q">
+      <button type="button" class="fq-q" (click)="open.set(open() === f.q ? '' : f.q)"
+        [attr.aria-expanded]="open() === f.q" [attr.aria-controls]="'fq-a-' + i">
+        <span>{{ f.q }}</span>
+        <span class="fq-ic"><app-icon [name]="open() === f.q ? 'chevron-up' : 'chevron-down'" [size]="16" /></span>
+      </button>
+      <div class="fq-a" [id]="'fq-a-' + i" role="region">
+        <div>
+          <p>{{ f.a }}</p>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  <p class="fq-help">Still have questions? <a routerLink="/support">Contact support<app-icon name="chevron-right"
+        [size]="14" /></a></p>
 </section>
 
 @if (couponOpen() && s.offers[0]; as o) {
-  <app-coupon-modal [offer]="{ title: o.title, code: o.code, desc: o.desc }" (closed)="couponOpen.set(false)" />
+<app-coupon-modal [offer]="{ title: o.title, code: o.code, desc: o.desc }" (closed)="couponOpen.set(false)" />
 }
